@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useDashboardData } from '../../hooks/useDashboardData';
 import GlassContainer from '../../components/common/GlassContainer';
 import StatCard from '../../components/cards/StatCard';
@@ -7,11 +7,13 @@ import SecurityScoreCard from '../../components/cards/SecurityScoreCard';
 import ScanChartCard from '../../components/cards/ScanChartCard';
 import RiskBreakdownCard from '../../components/cards/RiskBreakdownCard';
 import SecurityTipsCard from '../../components/cards/SecurityTipsCard';
+import DomainCompareCard from '../../components/cards/DomainCompareCard';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import FadeIn from '../../components/animations/FadeIn';
 import LandingPage from '../Landing/LandingPage';
 import SettingsPage from '../Settings/SettingsPage';
 import Navbar from '../../components/layout/Navbar';
+import { analyticsService } from '../../services/security/analytics';
 import {
   Activity,
   ShieldCheck,
@@ -20,11 +22,12 @@ import {
   Plus,
   Trash2,
   Globe,
+  Download,
+  Upload,
 } from 'lucide-react';
 
 /**
  * Gorillaz Guard - Minimal Production App Page Container
- * Defaults to Landing Page view first, with clean navigation tabs to Dashboard, History, Whitelist, and Settings
  */
 export default function DashboardPage() {
   const {
@@ -40,9 +43,11 @@ export default function DashboardPage() {
     setHistoryFilter,
     handleAddWhitelist,
     handleRemoveWhitelist,
+    refreshData,
   } = useDashboardData();
 
   const [newDomainInput, setNewDomainInput] = useState('');
+  const fileInputRef = useRef(null);
 
   const onAddDomainSubmit = (e) => {
     e?.preventDefault();
@@ -51,8 +56,28 @@ export default function DashboardPage() {
     setNewDomainInput('');
   };
 
+  const handleExportReport = () => {
+    analyticsService.exportJSONReport(metrics, historyList);
+  };
+
+  const handleExportWhitelist = () => {
+    analyticsService.exportWhitelistJSON(whitelist);
+  };
+
+  const handleImportWhitelist = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      await analyticsService.importWhitelistJSON(file);
+      refreshData();
+      alert('Whitelist backup imported successfully!');
+    } catch (err) {
+      alert('Failed to import whitelist. Please ensure it is a valid JSON file.');
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-[#070A12] text-slate-100 pb-12 selection:bg-cyan-500/20">
+    <div className="min-h-screen bg-[#0C0E14] text-[#F5F5F5] pb-12 selection:bg-[#E2454A]/20">
       {/* Top Navbar Component */}
       <Navbar activeTab={activeTab} onNavigate={(tab) => setActiveTab(tab)} />
 
@@ -65,6 +90,19 @@ export default function DashboardPage() {
         {/* Overview & Analytics View */}
         {activeTab === 'overview' && (
           <FadeIn className="space-y-6">
+            {/* Header Action Row (Audit Report Export) */}
+            <div className="flex items-center justify-between border-b border-white/5 pb-3">
+              <div>
+                <h2 className="text-xl font-bold text-white">Security Analytics Dashboard</h2>
+                <p className="text-xs text-slate-400">Live browser history inspection & threat analysis</p>
+              </div>
+
+              {/* Feature 1: Export Security Audit Report */}
+              <PrimaryButton variant="cyan" icon={Download} onClick={handleExportReport}>
+                Export Audit Report (JSON)
+              </PrimaryButton>
+            </div>
+
             {/* Metric Summary Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
               <StatCard
@@ -108,6 +146,9 @@ export default function DashboardPage() {
               </div>
             </div>
 
+            {/* Feature 2: Side-by-Side Domain Risk Comparison Tool */}
+            <DomainCompareCard />
+
             {/* Threat Risk Breakdown & Security Tips */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <RiskBreakdownCard />
@@ -121,7 +162,7 @@ export default function DashboardPage() {
           <FadeIn className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3">
               <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <ListFilter className="w-4 h-4 text-cyan-400" />
+                <ListFilter className="w-4 h-4 text-[#E2454A]" />
                 Real Browser History Inspection Log ({historyList.length})
               </h2>
 
@@ -130,7 +171,7 @@ export default function DashboardPage() {
                 <button
                   onClick={() => setHistoryFilter('all')}
                   className={`px-3 py-1 rounded-lg text-xs font-semibold ${
-                    historyFilter === 'all' ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30' : 'text-slate-400 hover:text-white'
+                    historyFilter === 'all' ? 'bg-[#E2454A]/20 text-[#E2454A] border border-[#E2454A]/30' : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   All ({historyList.length})
@@ -168,17 +209,48 @@ export default function DashboardPage() {
           </FadeIn>
         )}
 
-        {/* Whitelist Manager View */}
+        {/* Whitelist Manager View (Feature 5: Import & Export Backup) */}
         {activeTab === 'whitelist' && (
           <FadeIn className="space-y-5 max-w-4xl mx-auto">
             <GlassContainer className="p-5 space-y-4">
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <Globe className="w-4 h-4 text-cyan-400" />
-                Trusted Domain Whitelist Manager
-              </h2>
-              <p className="text-xs text-slate-400">
-                Domains listed here bypass warning overlays and automated security flags.
-              </p>
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/5 pb-3">
+                <div>
+                  <h2 className="text-base font-bold text-white flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-[#E2454A]" />
+                    Trusted Domain Whitelist Manager
+                  </h2>
+                  <p className="text-xs text-slate-400">
+                    Domains listed here bypass warning overlays and automated security flags.
+                  </p>
+                </div>
+
+                {/* Feature 5: Whitelist Backup Import & Export */}
+                <div className="flex items-center gap-2">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleImportWhitelist}
+                    accept=".json"
+                    className="hidden"
+                  />
+                  <PrimaryButton
+                    variant="glass"
+                    icon={Upload}
+                    onClick={() => fileInputRef.current?.click()}
+                    className="text-xs"
+                  >
+                    Import JSON
+                  </PrimaryButton>
+                  <PrimaryButton
+                    variant="glass"
+                    icon={Download}
+                    onClick={handleExportWhitelist}
+                    className="text-xs"
+                  >
+                    Export Backup
+                  </PrimaryButton>
+                </div>
+              </div>
 
               <form onSubmit={onAddDomainSubmit} className="flex gap-2">
                 <input
@@ -186,7 +258,7 @@ export default function DashboardPage() {
                   value={newDomainInput}
                   onChange={(e) => setNewDomainInput(e.target.value)}
                   placeholder="e.g. company-dashboard.internal.com"
-                  className="flex-1 bg-black/40 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-cyan-500"
+                  className="flex-1 bg-black/40 border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-[#E2454A]"
                 />
                 <PrimaryButton icon={Plus} variant="cyan" type="submit">
                   Add

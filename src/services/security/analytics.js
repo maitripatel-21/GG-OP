@@ -2,8 +2,8 @@ import { storageService } from '../storage/chromeStorage';
 import { urlAnalysisEngine } from '../url/urlAnalysisEngine';
 
 /**
- * Real-Time Security Analytics & Chrome History Inspection Service
- * 100% Real Dynamic Data - Zero Mock or Stubbed Records
+ * Real-Time Security Analytics, Export/Import, & Chrome History Service
+ * 100% Real Dynamic Data - Zero Stubs
  */
 export const analyticsService = {
   /**
@@ -46,7 +46,6 @@ export const analyticsService = {
       });
     }
 
-    // Dev mode fallback when running outside extension container (returns empty array if no real chrome API)
     return [];
   },
 
@@ -111,5 +110,85 @@ export const analyticsService = {
     const updated = current.filter((d) => d !== domain);
     await storageService.set('whitelist', updated);
     return updated;
+  },
+
+  /**
+   * Export Security Audit Report as JSON File
+   */
+  exportJSONReport(metrics, historyList) {
+    const reportData = {
+      title: 'Gorillaz Guard Security Audit Report',
+      generatedAt: new Date().toISOString(),
+      summary: {
+        totalInspected: metrics?.totalInspected || 0,
+        safeWebsites: metrics?.safeCount || 0,
+        unsafeWebsites: metrics?.riskyCount || 0,
+        averageSafetyScore: metrics?.avgScore || 100,
+        whitelistCount: metrics?.whitelistCount || 0,
+      },
+      inspectedDomains: historyList.map((item) => ({
+        domain: item.domain,
+        url: item.url,
+        safetyScore: item.safetyScore,
+        safetyLevel: item.safetyLevel,
+        threatCount: item.threatCount,
+        threats: item.threats,
+      })),
+    };
+
+    const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `GorillazGuard_SecurityReport_${Date.now()}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  },
+
+  /**
+   * Export Whitelist as JSON Backup File
+   */
+  exportWhitelistJSON(whitelist) {
+    const data = {
+      app: 'Gorillaz Guard',
+      type: 'whitelist_backup',
+      exportedAt: new Date().toISOString(),
+      whitelist,
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `GorillazGuard_Whitelist_${Date.now()}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  },
+
+  /**
+   * Import Whitelist from JSON file
+   */
+  async importWhitelistJSON(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          const importedDomains = Array.isArray(parsed) ? parsed : parsed.whitelist;
+          if (!Array.isArray(importedDomains)) {
+            reject(new Error('Invalid whitelist format'));
+            return;
+          }
+
+          const current = (await storageService.get('whitelist')) || [];
+          const merged = Array.from(new Set([...current, ...importedDomains.map((d) => d.trim().toLowerCase())])).filter(Boolean);
+          await storageService.set('whitelist', merged);
+          resolve(merged);
+        } catch (err) {
+          reject(err);
+        }
+      };
+      reader.onerror = (err) => reject(err);
+      reader.readAsText(file);
+    });
   },
 };
