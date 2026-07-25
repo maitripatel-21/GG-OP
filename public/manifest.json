@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Gorillaz Guard - Real-Time Web Security",
+  "short_name": "GorillazGuard",
+  "version": "1.0.0",
+  "description": "Modern AI-inspired browser extension for real-time URL analysis, HTTPS checking, and phishing threat detection.",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "tabs",
+    "history"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Browser Guard Security Popup"
+  },
+  "options_page": "options.html",
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
