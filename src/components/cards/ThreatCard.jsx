@@ -40,7 +40,9 @@ export default function ThreatCard({ threat }) {
   return (
     <GlassContainer className={`p-3 border ${style.bg} transition-all`}>
       <div className="flex items-start gap-2.5">
-        <div className={`p-1.5 rounded-lg bg-black/20 ${style.iconColor} shrink-0 mt-0.5`}>
+        <div
+          className={`p-1.5 rounded-lg bg-black/20 ${style.iconColor} shrink-0 mt-0.5`}
+        >
           <IconComponent className="w-4 h-4" />
         </div>
         <div className="space-y-0.5 text-xs">

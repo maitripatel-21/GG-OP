@@ -41,7 +41,9 @@ export function useSettings() {
 
     // Broadcast to runtime worker so background inspection updates settings live
     if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
-      chrome.runtime.sendMessage({ action: 'SAVE_SETTINGS', settings: updated }).catch(() => {});
+      chrome.runtime
+        .sendMessage({ action: 'SAVE_SETTINGS', settings: updated })
+        .catch(() => {});
     }
   };
 
@@ -54,7 +56,9 @@ export function useSettings() {
 
     // Broadcast reset to background worker
     if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
-      chrome.runtime.sendMessage({ action: 'SAVE_SETTINGS', settings: defaultState }).catch(() => {});
+      chrome.runtime
+        .sendMessage({ action: 'SAVE_SETTINGS', settings: defaultState })
+        .catch(() => {});
     }
   };
 

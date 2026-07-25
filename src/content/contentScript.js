@@ -35,10 +35,15 @@
       if (
         target &&
         target.tagName === 'INPUT' &&
-        (target.type === 'password' || target.name?.toLowerCase().includes('pass') || target.autocomplete?.includes('password'))
+        (target.type === 'password' ||
+          target.name?.toLowerCase().includes('pass') ||
+          target.autocomplete?.includes('password'))
       ) {
         if (isUnencrypted) {
-          showInputWarningTooltip(target, '⚠️ Gorillaz Guard Warning: Unencrypted HTTP connection. Avoid entering passwords here!');
+          showInputWarningTooltip(
+            target,
+            '⚠️ Gorillaz Guard Warning: Unencrypted HTTP connection. Avoid entering passwords here!'
+          );
         }
       }
     });
@@ -121,8 +126,12 @@
       <span>Gorillaz Guard: ${details.safetyScore || 100}/100</span>
     `;
 
-    badge.addEventListener('mouseover', () => { badge.style.transform = 'scale(1.05)'; });
-    badge.addEventListener('mouseout', () => { badge.style.transform = 'scale(1)'; });
+    badge.addEventListener('mouseover', () => {
+      badge.style.transform = 'scale(1.05)';
+    });
+    badge.addEventListener('mouseout', () => {
+      badge.style.transform = 'scale(1)';
+    });
 
     document.body.appendChild(badge);
   }
@@ -191,14 +200,17 @@
 
     document.getElementById('gg-trust-domain-btn')?.addEventListener('click', () => {
       if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
-        chrome.runtime.sendMessage({
-          action: 'ADD_WHITELIST',
-          domain: domainName,
-        }).then(() => {
-          removeSecurityBanner();
-        }).catch(() => {
-          removeSecurityBanner();
-        });
+        chrome.runtime
+          .sendMessage({
+            action: 'ADD_WHITELIST',
+            domain: domainName,
+          })
+          .then(() => {
+            removeSecurityBanner();
+          })
+          .catch(() => {
+            removeSecurityBanner();
+          });
       } else {
         removeSecurityBanner();
       }

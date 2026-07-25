@@ -40,7 +40,8 @@ export const urlAnalysisEngine = {
 
       // Check if domain is in user whitelist or top legit domains list
       const whitelist = (settings.whitelist || []).map((d) => d.toLowerCase());
-      const isWhitelisted = whitelist.includes(hostname) || whitelist.some((d) => hostname.endsWith(`.${d}`));
+      const isWhitelisted =
+        whitelist.includes(hostname) || whitelist.some((d) => hostname.endsWith(`.${d}`));
       const isLegitDomain = urlDetector.isTopLegitDomain(hostname);
 
       // GUARANTEED SAFE RETURN FOR WHITELISTED OR LEGIT PLATFORMS (e.g. GitHub, Google)
@@ -58,8 +59,12 @@ export const urlAnalysisEngine = {
           isLegitDomain: true,
           isWhitelisted: true,
           subdomainsCount: Math.max(0, hostname.split('.').length - 2),
-          domainAge: isWhitelisted ? 'User Trusted Whitelist Domain' : 'Verified Major Platform',
-          sslIssuer: isHttps ? 'Verified Certificate Authority (TLS 1.3)' : 'None (Unencrypted)',
+          domainAge: isWhitelisted
+            ? 'User Trusted Whitelist Domain'
+            : 'Verified Major Platform',
+          sslIssuer: isHttps
+            ? 'Verified Certificate Authority (TLS 1.3)'
+            : 'None (Unencrypted)',
           safetyScore: 100,
           safetyLevel: SAFETY_LEVELS.SAFE,
           threatCount: 0,
@@ -105,7 +110,9 @@ export const urlAnalysisEngine = {
         isWhitelisted: false,
         subdomainsCount: Math.max(0, hostname.split('.').length - 2),
         domainAge: this.estimateDomainAge(hostname),
-        sslIssuer: isHttps ? 'Verified Certificate Authority (TLS 1.3)' : 'None (Unencrypted)',
+        sslIssuer: isHttps
+          ? 'Verified Certificate Authority (TLS 1.3)'
+          : 'None (Unencrypted)',
         safetyScore,
         safetyLevel,
         threatCount: threatFindings.length,
@@ -159,7 +166,12 @@ export const urlAnalysisEngine = {
   estimateDomainAge(hostname) {
     if (!hostname) return 'Unknown';
     const lower = hostname.toLowerCase();
-    if (lower.includes('github') || lower.includes('google') || lower.includes('react') || lower.includes('wikipedia')) {
+    if (
+      lower.includes('github') ||
+      lower.includes('google') ||
+      lower.includes('react') ||
+      lower.includes('wikipedia')
+    ) {
       return '15+ years (Established)';
     }
     if (lower.includes('xyz') || lower.includes('temp') || lower.includes('claim')) {

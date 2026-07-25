@@ -19,7 +19,8 @@ export default function LandingPage({ onLaunchDashboard }) {
   const featureList = [
     {
       title: 'HTTPS & SSL Security Check',
-      description: 'Verifies SSL/TLS encryption certificates in real time to prevent unencrypted HTTP data exposure.',
+      description:
+        'Verifies SSL/TLS encryption certificates in real time to prevent unencrypted HTTP data exposure.',
       icon: Lock,
       badgeText: 'Phase 1 Active',
       variant: 'cyan',
@@ -27,7 +28,8 @@ export default function LandingPage({ onLaunchDashboard }) {
     },
     {
       title: 'Phishing Keyword Engine',
-      description: 'Detects deceptive login paths, credential harvesting words, and fake banking URLs instantly.',
+      description:
+        'Detects deceptive login paths, credential harvesting words, and fake banking URLs instantly.',
       icon: ShieldAlert,
       badgeText: 'Phase 2 Active',
       variant: 'rose',
@@ -35,7 +37,8 @@ export default function LandingPage({ onLaunchDashboard }) {
     },
     {
       title: 'IP Hostname & Shortener Detector',
-      description: 'Flags raw numerical IP addresses and hidden destination URL shortener services like bit.ly.',
+      description:
+        'Flags raw numerical IP addresses and hidden destination URL shortener services like bit.ly.',
       icon: Network,
       badgeText: 'Phase 2 Active',
       variant: 'amber',
@@ -43,7 +46,8 @@ export default function LandingPage({ onLaunchDashboard }) {
     },
     {
       title: 'Real-Time Safety Score Meter',
-      description: 'Calculates dynamic safety ratings (0 - 100) using radial SVG gauge animations.',
+      description:
+        'Calculates dynamic safety ratings (0 - 100) using radial SVG gauge animations.',
       icon: Activity,
       badgeText: 'Phase 1 Active',
       variant: 'emerald',
@@ -51,7 +55,8 @@ export default function LandingPage({ onLaunchDashboard }) {
     },
     {
       title: 'Security History & Analytics Hub',
-      description: 'Log visited sites, audit past security risks, and analyze domain threat levels in a full dashboard.',
+      description:
+        'Log visited sites, audit past security risks, and analyze domain threat levels in a full dashboard.',
       icon: Eye,
       badgeText: 'Phase 3 Active',
       variant: 'cyan',
@@ -59,7 +64,8 @@ export default function LandingPage({ onLaunchDashboard }) {
     },
     {
       title: 'Granular Safety Toggles',
-      description: 'Customize heuristic rules, auto warning banners, notifications, and domain whitelists.',
+      description:
+        'Customize heuristic rules, auto warning banners, notifications, and domain whitelists.',
       icon: Settings,
       badgeText: 'Phase 4 Active',
       variant: 'emerald',
@@ -75,10 +81,16 @@ export default function LandingPage({ onLaunchDashboard }) {
       {/* Main Content Layout */}
       <div className="relative z-10 space-y-12">
         {/* Hero Section */}
-        <Hero onExplore={() => scrollToSection('features-section')} onLaunchDashboard={onLaunchDashboard} />
+        <Hero
+          onExplore={() => scrollToSection('features-section')}
+          onLaunchDashboard={onLaunchDashboard}
+        />
 
         {/* Features Grid Section */}
-        <section id="features-section" className="py-12 max-w-7xl mx-auto px-4 sm:px-6 space-y-10">
+        <section
+          id="features-section"
+          className="py-12 max-w-7xl mx-auto px-4 sm:px-6 space-y-10"
+        >
           <div className="text-center space-y-2 max-w-3xl mx-auto">
             <h2 className="text-[11px] font-extrabold uppercase tracking-widest text-cyan-400">
               Complete Security Suite

@@ -13,7 +13,9 @@ export default function LandingFooter() {
           </div>
           <div>
             <span className="text-sm font-bold text-white">Gorillaz Guard</span>
-            <p className="text-[11px] text-slate-400">Chromium Manifest V3 Security Extension</p>
+            <p className="text-[11px] text-slate-400">
+              Chromium Manifest V3 Security Extension
+            </p>
           </div>
         </div>
 

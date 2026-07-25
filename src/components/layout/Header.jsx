@@ -5,7 +5,10 @@ import { browserService } from '../../services/browser/chrome';
 /**
  * Common App Header Component
  */
-export default function Header({ title = 'Gorillaz Guard', subtitle = 'Real-Time Protection' }) {
+export default function Header({
+  title = 'Gorillaz Guard',
+  subtitle = 'Real-Time Protection',
+}) {
   return (
     <header className="glass-panel p-3.5 rounded-2xl border border-white/10 flex items-center justify-between shadow-glass">
       <div className="flex items-center gap-3">

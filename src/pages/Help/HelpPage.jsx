@@ -71,7 +71,8 @@ export default function HelpPage() {
           </div>
           <h3 className="text-sm font-bold text-white">Real-Time Extension Popup</h3>
           <p className="text-xs text-slate-400">
-            Click the extension icon in your browser toolbar to instantly inspect the current tab&apos;s HTTPS status, domain parameters, and threat breakdown.
+            Click the extension icon in your browser toolbar to instantly inspect the
+            current tab&apos;s HTTPS status, domain parameters, and threat breakdown.
           </p>
         </GlassContainer>
 
@@ -81,7 +82,8 @@ export default function HelpPage() {
           </div>
           <h3 className="text-sm font-bold text-white">Password & Form Guard</h3>
           <p className="text-xs text-slate-400">
-            Automatically attaches floating warning tooltips over password input fields if you attempt to enter credentials on unencrypted or risky sites.
+            Automatically attaches floating warning tooltips over password input fields if
+            you attempt to enter credentials on unencrypted or risky sites.
           </p>
         </GlassContainer>
 
@@ -91,7 +93,8 @@ export default function HelpPage() {
           </div>
           <h3 className="text-sm font-bold text-white">Audit Report Exporter</h3>
           <p className="text-xs text-slate-400">
-            Download full structured JSON security reports of inspected browsing history with 1 click for security compliance and record keeping.
+            Download full structured JSON security reports of inspected browsing history
+            with 1 click for security compliance and record keeping.
           </p>
         </GlassContainer>
       </div>
@@ -100,7 +103,9 @@ export default function HelpPage() {
       <GlassContainer className="p-6 space-y-4">
         <div className="flex items-center gap-2 border-b border-white/10 pb-3">
           <LifeBuoy className="w-5 h-5 text-[#E2454A]" />
-          <h3 className="text-base font-bold text-white">Frequently Asked Questions (FAQ)</h3>
+          <h3 className="text-base font-bold text-white">
+            Frequently Asked Questions (FAQ)
+          </h3>
         </div>
 
         <div className="space-y-2.5">

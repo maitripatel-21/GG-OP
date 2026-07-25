@@ -25,8 +25,12 @@ export default function ScanChartCard() {
             <BarChart3 className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-base font-bold text-white">Scans & Threat Analytics Trend</h3>
-            <p className="text-xs text-slate-400">Weekly inspection volume vs detected risks</p>
+            <h3 className="text-base font-bold text-white">
+              Scans & Threat Analytics Trend
+            </h3>
+            <p className="text-xs text-slate-400">
+              Weekly inspection volume vs detected risks
+            </p>
           </div>
         </div>
 
@@ -43,7 +47,10 @@ export default function ScanChartCard() {
           const safeHeight = Math.round((d.safe / d.total) * 100);
 
           return (
-            <div key={i} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
+            <div
+              key={i}
+              className="flex-1 flex flex-col items-center gap-2 h-full justify-end group"
+            >
               {/* Tooltip Hover Value */}
               <span className="text-[10px] font-bold text-slate-400 group-hover:text-guard-cyan transition-colors">
                 {d.total}

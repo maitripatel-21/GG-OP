@@ -116,8 +116,12 @@ export default function SettingsPage() {
               <RotateCcw className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white">Reset & Persistent Storage</h3>
-              <p className="text-xs text-slate-400">Manage saved preferences in chrome.storage.local</p>
+              <h3 className="text-base font-bold text-white">
+                Reset & Persistent Storage
+              </h3>
+              <p className="text-xs text-slate-400">
+                Manage saved preferences in chrome.storage.local
+              </p>
             </div>
           </div>
 
@@ -130,14 +134,12 @@ export default function SettingsPage() {
         <div className="flex items-center justify-between pt-2">
           <div className="space-y-0.5">
             <p className="text-sm font-semibold text-slate-200">Reset All Settings</p>
-            <p className="text-xs text-slate-400">Restores all security preferences back to initial system defaults</p>
+            <p className="text-xs text-slate-400">
+              Restores all security preferences back to initial system defaults
+            </p>
           </div>
 
-          <PrimaryButton
-            variant="rose"
-            icon={RotateCcw}
-            onClick={resetSettings}
-          >
+          <PrimaryButton variant="rose" icon={RotateCcw} onClick={resetSettings}>
             Reset Settings
           </PrimaryButton>
         </div>

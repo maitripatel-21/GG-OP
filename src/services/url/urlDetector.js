@@ -78,7 +78,8 @@ export const urlDetector = {
       threats.push({
         id: THREAT_TYPES.UNENCRYPTED_HTTP,
         title: 'Unencrypted HTTP Connection',
-        description: 'This website does not use SSL/TLS encryption. Data entered here can be intercepted.',
+        description:
+          'This website does not use SSL/TLS encryption. Data entered here can be intercepted.',
         severity: 'HIGH',
         penalty: 30,
       });
@@ -89,7 +90,8 @@ export const urlDetector = {
       threats.push({
         id: THREAT_TYPES.SUSPICIOUS_IP_HOST,
         title: 'Numerical IP Hostname',
-        description: 'Websites using raw IP addresses instead of registered domain names are frequently used in phishing attacks.',
+        description:
+          'Websites using raw IP addresses instead of registered domain names are frequently used in phishing attacks.',
         severity: 'HIGH',
         penalty: 35,
       });
@@ -100,7 +102,8 @@ export const urlDetector = {
       threats.push({
         id: THREAT_TYPES.URL_SHORTENER,
         title: 'URL Shortener Service Detected',
-        description: 'Link shorteners mask the true destination domain, hiding potential security risks.',
+        description:
+          'Link shorteners mask the true destination domain, hiding potential security risks.',
         severity: 'MEDIUM',
         penalty: 15,
       });
@@ -112,7 +115,8 @@ export const urlDetector = {
       threats.push({
         id: THREAT_TYPES.EXCESSIVE_SUBDOMAINS,
         title: 'Excessive Subdomains',
-        description: 'Contains more than 2 subdomain levels, which can be an indicator of brand impersonation.',
+        description:
+          'Contains more than 2 subdomain levels, which can be an indicator of brand impersonation.',
         severity: 'MEDIUM',
         penalty: 20,
       });
@@ -133,7 +137,9 @@ export const urlDetector = {
         'appleid-verify-',
       ];
 
-      const matchedPatterns = deceptiveDomainPatterns.filter((pattern) => hostname.includes(pattern));
+      const matchedPatterns = deceptiveDomainPatterns.filter((pattern) =>
+        hostname.includes(pattern)
+      );
 
       // ONLY flag if deceptive pattern is in domain AND connection is unencrypted or non-HTTPS
       if (matchedPatterns.length > 0 && !isHttps) {
@@ -174,7 +180,8 @@ export const urlDetector = {
       threats.push({
         id: 'ENCODED_URL',
         title: 'Percent-Encoded Obfuscation',
-        description: 'Contains hex-encoded characters hiding original text in the address bar.',
+        description:
+          'Contains hex-encoded characters hiding original text in the address bar.',
         severity: 'LOW',
         penalty: 10,
       });

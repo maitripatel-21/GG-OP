@@ -46,7 +46,7 @@ html:not(.dark) .glass-card {
 }
 
 html:not(.dark) .text-white {
-  color: #0F172A !important;
+  color: #0f172a !important;
 }
 
 html:not(.dark) .text-slate-200 {
@@ -58,7 +58,7 @@ html:not(.dark) .text-slate-300 {
 }
 
 html:not(.dark) .text-slate-400 {
-  color: #64748B !important;
+  color: #64748b !important;
 }
 
 .glass-card-hover {

@@ -35,7 +35,9 @@ export default function Hero({ onExplore, onLaunchDashboard }) {
 
           {/* Description */}
           <p className="text-sm sm:text-base text-slate-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-            Instant real-time threat detection for Chrome, Edge, and Brave. Detect phishing URL signatures, unencrypted HTTP links, raw IP hostnames, and deceptive domains with 0% data tracking.
+            Instant real-time threat detection for Chrome, Edge, and Brave. Detect
+            phishing URL signatures, unencrypted HTTP links, raw IP hostnames, and
+            deceptive domains with 0% data tracking.
           </p>
 
           {/* Value Bullet Points */}
@@ -63,7 +65,9 @@ export default function Hero({ onExplore, onLaunchDashboard }) {
             <PrimaryButton
               variant="cyan"
               icon={ShieldCheck}
-              onClick={() => (onLaunchDashboard ? onLaunchDashboard() : browserService.openOptionsPage())}
+              onClick={() =>
+                onLaunchDashboard ? onLaunchDashboard() : browserService.openOptionsPage()
+              }
               className="w-full sm:w-auto px-6 py-3 text-sm font-bold"
             >
               Launch Dashboard
@@ -98,7 +102,9 @@ export default function Hero({ onExplore, onLaunchDashboard }) {
                   <div className="w-3 h-3 rounded-full bg-rose-500/80" />
                   <div className="w-3 h-3 rounded-full bg-amber-500/80" />
                   <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
-                  <span className="text-xs font-bold text-slate-300 ml-2">Gorillaz Guard Active</span>
+                  <span className="text-xs font-bold text-slate-300 ml-2">
+                    Gorillaz Guard Active
+                  </span>
                 </div>
                 <div className="flex items-center gap-1 text-[10px] text-emerald-400 font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30">
                   <Lock className="w-3 h-3" />
@@ -115,7 +121,9 @@ export default function Hero({ onExplore, onLaunchDashboard }) {
                   <span className="text-slate-400">Inspected Tab</span>
                   <span className="text-emerald-400 font-bold">100% Safe</span>
                 </div>
-                <p className="text-sm font-bold text-white truncate">https://github.com/facebook/react</p>
+                <p className="text-sm font-bold text-white truncate">
+                  https://github.com/facebook/react
+                </p>
               </div>
             </GlassContainer>
           </div>

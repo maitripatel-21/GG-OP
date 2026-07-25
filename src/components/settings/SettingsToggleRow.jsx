@@ -3,7 +3,13 @@ import ToggleSwitch from '../common/ToggleSwitch';
 /**
  * Reusable Settings Toggle Control Row Component
  */
-export default function SettingsToggleRow({ title, description, enabled, onChange, icon: Icon }) {
+export default function SettingsToggleRow({
+  title,
+  description,
+  enabled,
+  onChange,
+  icon: Icon,
+}) {
   return (
     <div className="flex items-center justify-between p-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all group">
       <div className="flex items-center gap-3 space-y-0.5">

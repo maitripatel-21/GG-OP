@@ -31,7 +31,9 @@ export default function FeatureCard({
       className={`p-6 space-y-4 group transition-all duration-300 ${variantGlows[variant] || variantGlows.cyan}`}
     >
       <div className="flex items-center justify-between">
-        <div className={`p-3 rounded-2xl border ${iconColors[variant]} transition-transform duration-300 group-hover:scale-110`}>
+        <div
+          className={`p-3 rounded-2xl border ${iconColors[variant]} transition-transform duration-300 group-hover:scale-110`}
+        >
           <Icon className="w-6 h-6" />
         </div>
         {badgeText && <Badge variant={variant}>{badgeText}</Badge>}

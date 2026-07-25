@@ -33,7 +33,10 @@ export default function WhySection() {
   ];
 
   return (
-    <section id="why-section" className="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
+    <section
+      id="why-section"
+      className="py-16 md:py-24 max-w-7xl mx-auto px-4 sm:px-6 space-y-12"
+    >
       <div className="text-center space-y-3 max-w-3xl mx-auto">
         <h2 className="text-xs font-extrabold uppercase tracking-widest text-guard-cyan">
           Why Gorillaz Guard
@@ -42,7 +45,8 @@ export default function WhySection() {
           Designed for Speed, Engineered for Complete Privacy
         </h3>
         <p className="text-sm text-slate-400">
-          Traditional security tools log your browsing data. Gorillaz Guard runs entirely on-device.
+          Traditional security tools log your browsing data. Gorillaz Guard runs entirely
+          on-device.
         </p>
       </div>
 
@@ -55,7 +59,9 @@ export default function WhySection() {
                 <IconComp className="w-6 h-6" />
               </div>
               <h4 className="text-lg font-bold text-white">{pillar.title}</h4>
-              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">{pillar.description}</p>
+              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                {pillar.description}
+              </p>
             </GlassContainer>
           );
         })}

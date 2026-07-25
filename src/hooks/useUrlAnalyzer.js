@@ -41,11 +41,13 @@ export function useUrlAnalyzer() {
         }
       };
 
-      if (chrome.tabs.onActivated) chrome.tabs.onActivated.addListener(handleTabActivated);
+      if (chrome.tabs.onActivated)
+        chrome.tabs.onActivated.addListener(handleTabActivated);
       if (chrome.tabs.onUpdated) chrome.tabs.onUpdated.addListener(handleTabUpdated);
 
       return () => {
-        if (chrome.tabs.onActivated) chrome.tabs.onActivated.removeListener(handleTabActivated);
+        if (chrome.tabs.onActivated)
+          chrome.tabs.onActivated.removeListener(handleTabActivated);
         if (chrome.tabs.onUpdated) chrome.tabs.onUpdated.removeListener(handleTabUpdated);
       };
     }

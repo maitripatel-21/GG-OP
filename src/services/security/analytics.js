@@ -24,7 +24,10 @@ export const analyticsService = {
             .map((item) => {
               const analysis = urlAnalysisEngine.analyze(item.url);
               const visitDate = item.lastVisitTime
-                ? new Date(item.lastVisitTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                ? new Date(item.lastVisitTime).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
                 : 'Recently';
 
               return {
@@ -70,9 +73,13 @@ export const analyticsService = {
     const totalInspected = allHistory.length;
     const safeCount = allHistory.filter((h) => h.safetyLevel === 'SAFE').length;
     const riskyCount = allHistory.filter((h) => h.safetyLevel !== 'SAFE').length;
-    const avgScore = totalInspected > 0
-      ? Math.round(allHistory.reduce((acc, curr) => acc + (curr.safetyScore || 100), 0) / totalInspected)
-      : 100;
+    const avgScore =
+      totalInspected > 0
+        ? Math.round(
+            allHistory.reduce((acc, curr) => acc + (curr.safetyScore || 100), 0) /
+              totalInspected
+          )
+        : 100;
 
     return {
       totalInspected,
@@ -136,7 +143,9 @@ export const analyticsService = {
       })),
     };
 
-    const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+    const blob = new Blob([JSON.stringify(reportData, null, 2)], {
+      type: 'application/json',
+    });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
@@ -180,7 +189,9 @@ export const analyticsService = {
           }
 
           const current = (await storageService.get('whitelist')) || [];
-          const merged = Array.from(new Set([...current, ...importedDomains.map((d) => d.trim().toLowerCase())])).filter(Boolean);
+          const merged = Array.from(
+            new Set([...current, ...importedDomains.map((d) => d.trim().toLowerCase())])
+          ).filter(Boolean);
           await storageService.set('whitelist', merged);
           resolve(merged);
         } catch (err) {

@@ -10,7 +10,11 @@ export default function ToggleSwitch({ enabled, onChange, label, description }) 
       className="flex items-center justify-between p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all cursor-pointer group"
     >
       <div className="space-y-0.5">
-        {label && <p className="text-sm font-semibold text-slate-200 group-hover:text-white">{label}</p>}
+        {label && (
+          <p className="text-sm font-semibold text-slate-200 group-hover:text-white">
+            {label}
+          </p>
+        )}
         {description && <p className="text-xs text-slate-400">{description}</p>}
       </div>
 

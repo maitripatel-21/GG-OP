@@ -1,7 +1,13 @@
 /**
  * Reusable Icon Button Component with ARIA Accessibility
  */
-export default function IconButton({ icon: Icon, onClick, title, ariaLabel, className = '' }) {
+export default function IconButton({
+  icon: Icon,
+  onClick,
+  title,
+  ariaLabel,
+  className = '',
+}) {
   return (
     <button
       type="button"

@@ -16,12 +16,19 @@ export default function WebsiteDetailsCard({ analysis }) {
       <div className="flex items-center justify-between border-b border-white/5 pb-2">
         <div className="flex items-center gap-2 overflow-hidden">
           <Globe className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-          <span className="text-xs font-bold text-white truncate max-w-[200px]" title={url}>
+          <span
+            className="text-xs font-bold text-white truncate max-w-[200px]"
+            title={url}
+          >
             {domain || url}
           </span>
         </div>
 
-        <Badge variant={isHttps ? 'safe' : 'danger'} icon={isHttps ? Lock : Unlock} size="sm">
+        <Badge
+          variant={isHttps ? 'safe' : 'danger'}
+          icon={isHttps ? Lock : Unlock}
+          size="sm"
+        >
           {isHttps ? 'HTTPS' : 'HTTP'}
         </Badge>
       </div>

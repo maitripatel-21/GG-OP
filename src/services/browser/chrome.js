@@ -50,7 +50,11 @@ export const browserService = {
    * Open full-screen Security Dashboard / Options page
    */
   openOptionsPage() {
-    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.openOptionsPage) {
+    if (
+      typeof chrome !== 'undefined' &&
+      chrome.runtime &&
+      chrome.runtime.openOptionsPage
+    ) {
       chrome.runtime.openOptionsPage();
     } else {
       window.open('/options.html', '_blank');

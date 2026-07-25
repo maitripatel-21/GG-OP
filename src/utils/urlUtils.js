@@ -57,7 +57,10 @@ export function isUnsafePort(port, protocol) {
   if (protocol === 'http:' && (numPort === 80 || numPort === 8080)) return false;
 
   // Known dangerous or non-standard ports
-  const dangerousPorts = [21, 22, 23, 25, 53, 110, 143, 445, 1433, 3306, 3389, 5432, 6379, 6667, 8000, 8888, 9000];
+  const dangerousPorts = [
+    21, 22, 23, 25, 53, 110, 143, 445, 1433, 3306, 3389, 5432, 6379, 6667, 8000, 8888,
+    9000,
+  ];
   return dangerousPorts.includes(numPort) || numPort > 1024;
 }
 

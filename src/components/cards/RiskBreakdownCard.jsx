@@ -57,7 +57,9 @@ export default function RiskBreakdownCard() {
             <ShieldAlert className="w-5 h-5 text-guard-cyan" />
             Security Threat & Risk Breakdown
           </h3>
-          <p className="text-xs text-slate-400">Heuristic engine evaluation across threat vectors</p>
+          <p className="text-xs text-slate-400">
+            Heuristic engine evaluation across threat vectors
+          </p>
         </div>
         <span className="text-xs font-extrabold px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
           Real-Time
@@ -75,7 +77,9 @@ export default function RiskBreakdownCard() {
                   <span>{cat.name}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={`text-[11px] font-bold ${cat.textColor}`}>{cat.status}</span>
+                  <span className={`text-[11px] font-bold ${cat.textColor}`}>
+                    {cat.status}
+                  </span>
                   <span className="text-slate-400">{cat.percentage}%</span>
                 </div>
               </div>

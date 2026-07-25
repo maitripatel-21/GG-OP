@@ -33,9 +33,7 @@ export default function PopupPage() {
         <>
           {/* Risk Score Radial Gauge */}
           <FadeIn delay={0.1}>
-            <SecurityScoreCard
-              score={analysisResult?.safetyScore ?? 100}
-            />
+            <SecurityScoreCard score={analysisResult?.safetyScore ?? 100} />
           </FadeIn>
 
           {/* Website & Protocol Details Card */}

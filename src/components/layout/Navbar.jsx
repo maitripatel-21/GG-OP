@@ -8,12 +8,17 @@ export default function Navbar({ activeTab = 'landing', onNavigate }) {
     <header className="sticky top-4 z-50 max-w-7xl mx-auto px-4 sm:px-6 font-sans">
       <nav className="glass-panel p-3.5 rounded-2xl border border-white/10 flex items-center justify-between shadow-sm">
         {/* Brand Logo */}
-        <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => onNavigate?.('landing')}>
+        <div
+          className="flex items-center gap-2.5 cursor-pointer"
+          onClick={() => onNavigate?.('landing')}
+        >
           <div className="p-2 rounded-xl bg-[#E2454A]/10 border border-[#E2454A]/20 text-[#E2454A]">
             <Shield className="w-5 h-5" />
           </div>
           <div>
-            <span className="text-base font-bold text-white tracking-tight">Gorillaz Guard</span>
+            <span className="text-base font-bold text-white tracking-tight">
+              Gorillaz Guard
+            </span>
             <span className="hidden sm:inline-block ml-2 text-[10px] font-semibold text-emerald-400">
               v1.0.0
             </span>

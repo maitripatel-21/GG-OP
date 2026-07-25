@@ -88,7 +88,9 @@ export default function SecurityScoreCard({ score = 100 }) {
 
       {/* Minimal Status Label */}
       <div className="mt-1 space-y-0.5">
-        <div className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full border text-[11px] font-bold ${config.badgeClass}`}>
+        <div
+          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full border text-[11px] font-bold ${config.badgeClass}`}
+        >
           <IconComponent className="w-3.5 h-3.5" />
           <span>{config.label}</span>
         </div>

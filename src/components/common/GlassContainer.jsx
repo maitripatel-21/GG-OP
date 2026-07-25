@@ -13,7 +13,8 @@ export default function GlassContainer({
   const variants = {
     default: 'bg-[#0D1320]/75 border-white/5 shadow-sm',
     card: 'bg-[#151D2D]/40 border-white/5',
-    interactive: 'bg-white/[0.03] border-white/10 hover:border-cyan-500/30 hover:bg-white/[0.06]',
+    interactive:
+      'bg-white/[0.03] border-white/10 hover:border-cyan-500/30 hover:bg-white/[0.06]',
     danger: 'bg-rose-500/[0.06] border-rose-500/20',
     success: 'bg-emerald-500/[0.06] border-emerald-500/20',
   };
