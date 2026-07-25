@@ -4,23 +4,23 @@
 
 @layer base {
   body {
-    @apply bg-[#070A12] text-slate-100 font-sans antialiased selection:bg-cyan-500/20 selection:text-cyan-400;
+    @apply bg-[#0C0E14] text-[#F5F5F5] font-sans antialiased selection:bg-[#E2454A]/30 selection:text-[#E2454A];
   }
 }
 
 /* Minimal Glassmorphism Utility Classes */
 .glass-panel {
-  background: rgba(13, 19, 32, 0.75);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(22, 25, 34, 0.8);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .glass-card {
-  background: rgba(21, 29, 45, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  background: rgba(31, 36, 50, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .glass-card-hover {
@@ -28,25 +28,25 @@
 }
 
 .glass-card-hover:hover {
-  background: rgba(21, 29, 45, 0.7);
-  border-color: rgba(6, 182, 212, 0.25);
+  background: rgba(31, 36, 50, 0.75);
+  border-color: rgba(226, 69, 74, 0.35);
 }
 
-/* Minimal Scrollbar */
+/* Minimal Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #070A12;
+  background: #0C0E14;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(218, 218, 218, 0.2);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(6, 182, 212, 0.4);
+  background: rgba(226, 69, 74, 0.5);
 }
