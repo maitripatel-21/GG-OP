@@ -12,6 +12,7 @@ import PrimaryButton from '../../components/buttons/PrimaryButton';
 import FadeIn from '../../components/animations/FadeIn';
 import LandingPage from '../Landing/LandingPage';
 import SettingsPage from '../Settings/SettingsPage';
+import HelpPage from '../Help/HelpPage';
 import Navbar from '../../components/layout/Navbar';
 import { analyticsService } from '../../services/security/analytics';
 import {
@@ -209,7 +210,7 @@ export default function DashboardPage() {
           </FadeIn>
         )}
 
-        {/* Whitelist Manager View (Feature 5: Import & Export Backup) */}
+        {/* Whitelist Manager View */}
         {activeTab === 'whitelist' && (
           <FadeIn className="space-y-5 max-w-4xl mx-auto">
             <GlassContainer className="p-5 space-y-4">
@@ -285,6 +286,9 @@ export default function DashboardPage() {
 
         {/* Settings View */}
         {activeTab === 'settings' && <SettingsPage />}
+
+        {/* Help & Support View */}
+        {activeTab === 'help' && <HelpPage />}
       </main>
     </div>
   );
