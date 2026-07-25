@@ -2,7 +2,7 @@
   "name": "gorillaz-guard",
   "version": "1.0.0",
   "private": true,
-  "description": "Modern Chromium Manifest V3 browser extension for real-time URL analysis, HTTPS checking, and phishing threat detection.",
+  "description": "Gorillaz Guard - Modern Chromium Manifest V3 browser extension for real-time URL analysis, HTTPS checking, and phishing threat detection.",
   "type": "module",
   "scripts": {
     "dev": "vite",
