@@ -22,7 +22,6 @@ import {
   Plus,
   Trash2,
   Globe,
-  Lightbulb,
 } from 'lucide-react';
 
 /**
