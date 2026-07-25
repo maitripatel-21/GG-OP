@@ -12,6 +12,7 @@ import ToggleSwitch from '../../components/common/ToggleSwitch';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import FadeIn from '../../components/animations/FadeIn';
 import LandingPage from '../Landing/LandingPage';
+import SettingsPage from '../Settings/SettingsPage';
 import {
   Shield,
   Activity,
@@ -319,53 +320,7 @@ export default function DashboardPage() {
       )}
 
       {/* Settings View */}
-      {activeTab === 'settings' && (
-        <FadeIn className="space-y-6 max-w-3xl">
-          <GlassContainer className="p-6 space-y-5">
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <SettingsIcon className="w-5 h-5 text-guard-cyan" />
-              Security Engine Preferences
-            </h3>
-
-            <div className="space-y-3">
-              <ToggleSwitch
-                label="Real-Time Protection Shield"
-                description="Enable continuous background inspecting of open browser tabs"
-                enabled={settings.protectionEnabled}
-                onChange={(val) => updateSettings({ protectionEnabled: val })}
-              />
-
-              <ToggleSwitch
-                label="Automatic Threat Banners"
-                description="Inject warning banner on dangerous domains"
-                enabled={settings.autoWarnBanners}
-                onChange={(val) => updateSettings({ autoWarnBanners: val })}
-              />
-
-              <ToggleSwitch
-                label="Check Unencrypted HTTP Connections"
-                description="Warn when visiting sites lacking SSL/TLS encryption"
-                enabled={settings.checkHttps}
-                onChange={(val) => updateSettings({ checkHttps: val })}
-              />
-
-              <ToggleSwitch
-                label="Detect IP-Address Hostnames"
-                description="Flag websites using raw numerical IP addresses"
-                enabled={settings.checkIpUrls}
-                onChange={(val) => updateSettings({ checkIpUrls: val })}
-              />
-
-              <ToggleSwitch
-                label="Detect URL Shortener Links"
-                description="Flag links hiding destination URLs (e.g. bit.ly)"
-                enabled={settings.checkShorteners}
-                onChange={(val) => updateSettings({ checkShorteners: val })}
-              />
-            </div>
-          </GlassContainer>
-        </FadeIn>
-      )}
+      {activeTab === 'settings' && <SettingsPage />}
     </div>
   );
 }

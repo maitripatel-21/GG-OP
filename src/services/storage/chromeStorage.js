@@ -1,7 +1,7 @@
 import { DEFAULT_SETTINGS } from '../../constants/securityConstants';
 
 /**
- * Storage service wrapper supporting Chrome Storage API with localStorage fallback for web dev
+ * Storage Service Wrapper supporting Chrome Storage API with localStorage fallback for web dev
  */
 export const storageService = {
   /**
@@ -21,7 +21,7 @@ export const storageService = {
 
     // Dev Fallback (localStorage)
     try {
-      const item = localStorage.getItem(`bg_${key}`);
+      const item = localStorage.getItem(`gg_${key}`);
       return item ? JSON.parse(item) : defaultValue;
     } catch {
       return defaultValue;
@@ -43,14 +43,14 @@ export const storageService = {
 
     // Dev Fallback
     try {
-      localStorage.setItem(`bg_${key}`, JSON.stringify(value));
+      localStorage.setItem(`gg_${key}`, JSON.stringify(value));
     } catch (e) {
       console.warn('Storage set failed in dev fallback', e);
     }
   },
 
   /**
-   * Fetch current extension settings merged with default settings
+   * Fetch current extension settings merged with system default settings
    * @returns {Promise<object>}
    */
   async getSettings() {
@@ -59,14 +59,23 @@ export const storageService = {
   },
 
   /**
-   * Update extension settings
-   * @param {object} newSettings
+   * Update extension settings persistently
+   * @param {object} newSettingsPartial
    * @returns {Promise<object>}
    */
-  async saveSettings(newSettings) {
+  async saveSettings(newSettingsPartial) {
     const current = await this.getSettings();
-    const updated = { ...current, ...newSettings };
+    const updated = { ...current, ...newSettingsPartial };
     await this.set('settings', updated);
     return updated;
+  },
+
+  /**
+   * Reset all settings back to initial factory defaults
+   * @returns {Promise<object>}
+   */
+  async resetSettings() {
+    await this.set('settings', DEFAULT_SETTINGS);
+    return { ...DEFAULT_SETTINGS };
   },
 };
