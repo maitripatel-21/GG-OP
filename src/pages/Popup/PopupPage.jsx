@@ -1,45 +1,49 @@
-import { useSecurity } from '../../context/SecurityContext';
+import { useUrlAnalyzer } from '../../hooks/useUrlAnalyzer';
 import Header from '../../components/layout/Header';
 import Footer from '../../components/layout/Footer';
 import SecurityScoreCard from '../../components/cards/SecurityScoreCard';
-import UrlAnalysisCard from '../../components/cards/UrlAnalysisCard';
+import WebsiteDetailsCard from '../../components/cards/WebsiteDetailsCard';
 import ThreatCard from '../../components/cards/ThreatCard';
-import ToggleSwitch from '../../components/common/ToggleSwitch';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import FadeIn from '../../components/animations/FadeIn';
-import { RefreshCw, ExternalLink } from 'lucide-react';
+import { RefreshCw, ExternalLink, Search } from 'lucide-react';
 import { browserService } from '../../services/browser/chrome';
 
+/**
+ * Gorillaz Guard - Production Extension Popup Page Component
+ */
 export default function PopupPage() {
-  const { analysis, settings, updateSettings, refreshAnalysis, loading } = useSecurity();
+  const { analysisResult, isScanning, scanActiveTab } = useUrlAnalyzer();
 
-  const threats = analysis?.threats || [];
+  const threats = analysisResult?.threats || [];
 
   return (
-    <div className="p-3.5 space-y-3.5 max-w-[380px] mx-auto select-none">
-      {/* Extension Header */}
-      <Header />
+    <div className="p-3.5 space-y-3.5 max-w-[380px] mx-auto select-none font-sans bg-guard-bg text-slate-100 min-h-[560px]">
+      {/* Header */}
+      <Header title="Gorillaz Guard" subtitle="Real-Time Protection" />
 
-      {/* Main Score Gauge */}
+      {/* Risk Score Radial Gauge */}
       <FadeIn delay={0.1}>
         <SecurityScoreCard
-          score={analysis?.safetyScore ?? 100}
-          level={analysis?.safetyLevel ?? 'SAFE'}
+          score={analysisResult?.safetyScore ?? 100}
+          level={analysisResult?.safetyLevel ?? 'SAFE'}
         />
       </FadeIn>
 
-      {/* URL & Domain Metrics */}
+      {/* Website & Protocol Details Card (Current website, HTTPS status, Domain, Protocol) */}
       <FadeIn delay={0.2}>
-        <UrlAnalysisCard analysis={analysis} />
+        <WebsiteDetailsCard analysis={analysisResult} />
       </FadeIn>
 
-      {/* Security Threat Alerts List */}
+      {/* Threat Warnings List */}
       {threats.length > 0 && (
         <FadeIn delay={0.3} className="space-y-2">
-          <h3 className="text-xs font-extrabold text-slate-300 uppercase tracking-wider px-1">
-            Detected Security Alerts ({threats.length})
-          </h3>
-          <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
+          <div className="flex items-center justify-between px-1">
+            <h3 className="text-[11px] font-extrabold text-slate-300 uppercase tracking-wider">
+              Security Alerts Detected ({threats.length})
+            </h3>
+          </div>
+          <div className="space-y-2 max-h-[140px] overflow-y-auto pr-1">
             {threats.map((threat, index) => (
               <ThreatCard key={threat.id || index} threat={threat} />
             ))}
@@ -47,33 +51,38 @@ export default function PopupPage() {
         </FadeIn>
       )}
 
-      {/* Real-time Protection Toggle */}
-      <FadeIn delay={0.4}>
-        <ToggleSwitch
-          label="Real-Time Shield"
-          description="Intercept suspicious URLs & active threats"
-          enabled={settings.protectionEnabled}
-          onChange={(val) => updateSettings({ protectionEnabled: val })}
-        />
-      </FadeIn>
+      {/* Action Buttons Grid (Analyze Button, Refresh Button, Open Dashboard Button) */}
+      <FadeIn delay={0.4} className="space-y-2 pt-1">
+        <div className="grid grid-cols-2 gap-2">
+          {/* Analyze / Scan Button */}
+          <PrimaryButton
+            variant="cyan"
+            icon={Search}
+            onClick={scanActiveTab}
+            disabled={isScanning}
+          >
+            {isScanning ? 'Scanning...' : 'Analyze Tab'}
+          </PrimaryButton>
 
-      {/* Quick Action Buttons */}
-      <FadeIn delay={0.5} className="grid grid-cols-2 gap-2 pt-1">
+          {/* Refresh Button */}
+          <PrimaryButton
+            variant="glass"
+            icon={RefreshCw}
+            onClick={scanActiveTab}
+            disabled={isScanning}
+          >
+            Refresh
+          </PrimaryButton>
+        </div>
+
+        {/* Open Dashboard Button */}
         <PrimaryButton
           variant="glass"
-          icon={RefreshCw}
-          onClick={refreshAnalysis}
-          disabled={loading}
-        >
-          {loading ? 'Scanning...' : 'Rescan Tab'}
-        </PrimaryButton>
-
-        <PrimaryButton
-          variant="cyan"
           icon={ExternalLink}
           onClick={() => browserService.openOptionsPage()}
+          className="w-full justify-center"
         >
-          Dashboard
+          Open Dashboard
         </PrimaryButton>
       </FadeIn>
 
