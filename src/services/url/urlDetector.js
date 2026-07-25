@@ -1,151 +1,149 @@
+import { THREAT_TYPES } from '../../constants/securityConstants';
 import {
   isIpAddress,
   isShortenedUrl,
   isUnsafePort,
-  isEncodedUrl,
-  countSpecialChars,
+  containsEncodedCharacters,
+  countSpecialCharacters,
 } from '../../utils/urlUtils';
 
 /**
- * Suspicious keyword dictionary for phishing intent scanning
+ * URL Threat Detector Service
+ * Evaluates individual threat vectors respecting user settings preferences
  */
-const SUSPICIOUS_KEYWORDS = [
-  'login',
-  'verify',
-  'account',
-  'update-password',
-  'secure-auth',
-  'banking',
-  'confirm-identity',
-  'wallet-connect',
-  'web3-claim',
-  'credential',
-  'pay-now',
-  'security-alert',
-  'signin',
-  'support-ticket',
-];
-
 export const urlDetector = {
   /**
-   * Run all 9 security checks against parsed URL object
+   * Detect all threat vectors in URL
    * @param {URL} parsedUrl
    * @param {string} rawUrl
-   * @returns {Array<object>} Detected threat findings
+   * @param {object} settings Active user security settings
+   * @returns {Array<object>} List of detected threat objects
    */
-  detectAll(parsedUrl, rawUrl) {
+  detectAll(parsedUrl, rawUrl, settings = {}) {
     const threats = [];
+    const hostname = parsedUrl.hostname || '';
 
-    // 1. HTTP vs HTTPS Check
-    if (parsedUrl.protocol === 'http:') {
+    // Default settings if undefined
+    const checkHttps = settings.checkHttps ?? true;
+    const checkIpUrls = settings.checkIpUrls ?? true;
+    const checkShorteners = settings.checkShorteners ?? true;
+    const checkKeywords = settings.checkKeywords ?? true;
+
+    // 1. Unencrypted HTTP Connection
+    if (checkHttps && parsedUrl.protocol === 'http:') {
       threats.push({
-        id: 'UNENCRYPTED_HTTP',
-        type: 'HTTP_PROTOCOL',
-        severity: 'MEDIUM',
-        penalty: 30,
+        id: THREAT_TYPES.UNENCRYPTED_HTTP,
         title: 'Unencrypted HTTP Connection',
-        description: 'Connection lacks SSL/TLS encryption. Sensitive data transmitted may be intercepted.',
+        description: 'This website does not use SSL/TLS encryption. Data entered here can be intercepted.',
+        severity: 'HIGH',
+        penalty: 30,
       });
     }
 
-    // 2. IP Address Hostname Check
-    if (isIpAddress(parsedUrl.hostname)) {
+    // 2. IP Address Hostname
+    if (checkIpUrls && isIpAddress(hostname)) {
       threats.push({
-        id: 'SUSPICIOUS_IP_HOST',
-        type: 'IP_ADDRESS',
+        id: THREAT_TYPES.SUSPICIOUS_IP_HOST,
+        title: 'Numerical IP Hostname',
+        description: 'Websites using raw IP addresses instead of registered domain names are frequently used in phishing attacks.',
         severity: 'HIGH',
         penalty: 35,
-        title: 'Numerical IP Address Host',
-        description: 'URL uses a raw IP address instead of a domain name, a signature phishing indicator.',
       });
     }
 
-    // 3. Excessive Subdomains Check
-    const domainParts = parsedUrl.hostname.split('.');
-    const subdomainsCount = Math.max(0, domainParts.length - 2);
-    if (subdomainsCount > 2) {
+    // 3. URL Shortener Link
+    if (checkShorteners && isShortenedUrl(hostname)) {
       threats.push({
-        id: 'EXCESSIVE_SUBDOMAINS',
-        type: 'SUBDOMAIN_BLOAT',
+        id: THREAT_TYPES.URL_SHORTENER,
+        title: 'URL Shortener Service Detected',
+        description: 'Link shorteners mask the true destination domain, hiding potential security risks.',
+        severity: 'MEDIUM',
+        penalty: 15,
+      });
+    }
+
+    // 4. Excessive Subdomains (> 2 levels)
+    const domainParts = hostname.split('.');
+    if (domainParts.length > 3) {
+      threats.push({
+        id: THREAT_TYPES.EXCESSIVE_SUBDOMAINS,
+        title: 'Excessive Subdomains',
+        description: 'Contains more than 2 subdomain levels, which can be an indicator of brand impersonation.',
         severity: 'MEDIUM',
         penalty: 20,
-        title: 'Excessive Subdomain Levels',
-        description: `Host contains ${subdomainsCount} subdomain levels, often used to disguise fake brand domains.`,
       });
     }
 
-    // 4. Suspicious Keywords Check
-    const fullPath = (parsedUrl.hostname + parsedUrl.pathname + parsedUrl.search).toLowerCase();
-    const matchedKeywords = SUSPICIOUS_KEYWORDS.filter((kw) => fullPath.includes(kw));
-    if (matchedKeywords.length > 0) {
-      threats.push({
-        id: 'SUSPICIOUS_KEYWORDS',
-        type: 'PHISHING_KEYWORDS',
-        severity: 'HIGH',
-        penalty: 25,
-        title: 'Phishing Keyword Indicator',
-        description: `URL contains suspicious keywords: "${matchedKeywords.join(', ')}".`,
-      });
+    // 5. Phishing Keywords in URL
+    if (checkKeywords) {
+      const suspiciousKeywords = [
+        'login',
+        'signin',
+        'account',
+        'banking',
+        'verify',
+        'secure-login',
+        'update-password',
+        'wallet-connect',
+        'paypal-security',
+        'appleid-verify',
+      ];
+      const lowerUrl = rawUrl.toLowerCase();
+      const matchedKeywords = suspiciousKeywords.filter((kw) => lowerUrl.includes(kw));
+
+      if (matchedKeywords.length > 0 && !hostname.includes('google.com') && !hostname.includes('github.com')) {
+        threats.push({
+          id: THREAT_TYPES.PHISHING_KEYWORDS,
+          title: 'Suspicious Credential Keywords',
+          description: `URL contains potential phishing keywords: "${matchedKeywords.join(', ')}".`,
+          severity: 'HIGH',
+          penalty: 25,
+        });
+      }
     }
 
-    // 5. Very Long URL Check (> 75 characters)
-    if (rawUrl.length > 75) {
-      threats.push({
-        id: 'EXCESSIVE_URL_LENGTH',
-        type: 'LONG_URL',
-        severity: 'LOW',
-        penalty: 15,
-        title: 'Excessively Long URL',
-        description: `URL is ${rawUrl.length} characters long, which may obscure the true destination.`,
-      });
-    }
-
-    // 6. Shortened URL Check
-    if (isShortenedUrl(parsedUrl.hostname)) {
-      threats.push({
-        id: 'URL_SHORTENER',
-        type: 'SHORTENED_URL',
-        severity: 'LOW',
-        penalty: 15,
-        title: 'Shortened URL Service',
-        description: 'Destination domain is obscured behind a URL shortening redirection service.',
-      });
-    }
-
-    // 7. Unsafe Network Port Check
-    if (isUnsafePort(parsedUrl.port, parsedUrl.protocol)) {
+    // 6. Unsafe Network Port
+    if (parsedUrl.port && isUnsafePort(parsedUrl.port)) {
       threats.push({
         id: 'UNSAFE_PORT',
-        type: 'NON_STANDARD_PORT',
+        title: 'Non-Standard Network Port',
+        description: `Website runs on non-standard port :${parsedUrl.port}, bypassing standard security filters.`,
         severity: 'HIGH',
         penalty: 25,
-        title: 'Unsafe Network Port',
-        description: `Connection targets non-standard network port ${parsedUrl.port}.`,
       });
     }
 
-    // 8. Suspicious Special Characters Check (> 3 occurrences)
-    const specialCharCount = countSpecialChars(rawUrl);
-    if (specialCharCount > 3) {
+    // 7. Excessive URL Length (> 75 chars)
+    if (rawUrl.length > 75) {
       threats.push({
-        id: 'SPECIAL_CHARACTERS',
-        type: 'OBFUSCATED_CHARS',
-        severity: 'MEDIUM',
+        id: 'LONG_URL',
+        title: 'Excessively Long URL',
+        description: `URL length is ${rawUrl.length} characters long. Long URLs are often used to hide deceptive domain names.`,
+        severity: 'LOW',
         penalty: 15,
-        title: 'Suspicious Special Characters',
-        description: `URL contains ${specialCharCount} special characters (@, %, $, !), indicating potential obfuscation.`,
       });
     }
 
-    // 9. Encoded URL Check
-    if (isEncodedUrl(rawUrl)) {
+    // 8. Percent-Encoded Obfuscation
+    if (containsEncodedCharacters(rawUrl)) {
       threats.push({
         id: 'ENCODED_URL',
-        type: 'PERCENT_ENCODING',
+        title: 'Percent-Encoded Obfuscation',
+        description: 'Contains hex-encoded characters hiding original text in the address bar.',
         severity: 'LOW',
         penalty: 10,
-        title: 'Percent-Encoded Characters',
-        description: 'URL contains percent-encoded hex sequences, hiding destination path elements.',
+      });
+    }
+
+    // 9. Suspicious Special Characters
+    const specialCount = countSpecialCharacters(rawUrl);
+    if (specialCount > 5) {
+      threats.push({
+        id: 'SPECIAL_CHARACTERS',
+        title: 'Excessive Special Characters',
+        description: `Contains ${specialCount} special characters (@, %, -, _), commonly used to obscure links.`,
+        severity: 'MEDIUM',
+        penalty: 15,
       });
     }
 

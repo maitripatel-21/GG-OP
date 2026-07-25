@@ -4,23 +4,61 @@
 
 @layer base {
   body {
-    @apply bg-[#0C0E14] text-[#F5F5F5] font-sans antialiased selection:bg-[#E2454A]/30 selection:text-[#E2454A];
+    @apply bg-[#0C0E14] text-[#F5F5F5] font-sans antialiased selection:bg-[#E2454A]/30 selection:text-[#E2454A] transition-colors duration-300;
+  }
+
+  /* Light mode theme overrides when dark mode is toggled off */
+  html:not(.dark) body {
+    @apply bg-[#F4F6F9] text-[#1E293B];
   }
 }
 
-/* Minimal Glassmorphism Utility Classes */
+/* Dark Mode Glassmorphism Utility Classes */
 .glass-panel {
-  background: rgba(22, 25, 34, 0.8);
+  background: rgba(22, 25, 34, 0.85);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 255, 255, 0.07);
 }
 
 .glass-card {
-  background: rgba(31, 36, 50, 0.45);
+  background: rgba(31, 36, 50, 0.5);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Light Mode Glassmorphism Overrides */
+html:not(.dark) .glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+html:not(.dark) .glass-card {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+html:not(.dark) .text-white {
+  color: #0F172A !important;
+}
+
+html:not(.dark) .text-slate-200 {
+  color: #334155 !important;
+}
+
+html:not(.dark) .text-slate-300 {
+  color: #475569 !important;
+}
+
+html:not(.dark) .text-slate-400 {
+  color: #64748B !important;
 }
 
 .glass-card-hover {
@@ -32,14 +70,19 @@
   border-color: rgba(226, 69, 74, 0.35);
 }
 
-/* Minimal Custom Scrollbar */
+html:not(.dark) .glass-card-hover:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(226, 69, 74, 0.4);
+}
+
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 5px;
   height: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0C0E14;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {

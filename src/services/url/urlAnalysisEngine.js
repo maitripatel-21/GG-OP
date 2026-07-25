@@ -4,15 +4,16 @@ import { SAFETY_LEVELS } from '../../constants/securityConstants';
 
 /**
  * Master URL Analysis Engine
- * Encapsulates full client-side URL parsing, internal browser URL handling, threat detection, and structured JSON output
+ * Encapsulates full client-side URL parsing, settings preferences, threat detection, and structured JSON output
  */
 export const urlAnalysisEngine = {
   /**
    * Analyze raw URL and return structured JSON report
    * @param {string} rawUrl
+   * @param {object} settings Active user security settings
    * @returns {object} Structured JSON Security Analysis Report
    */
-  analyze(rawUrl) {
+  analyze(rawUrl, settings = {}) {
     if (!rawUrl || typeof rawUrl !== 'string') {
       return this.createSystemReport(rawUrl || 'Invalid URL', 'System Page');
     }
@@ -39,8 +40,8 @@ export const urlAnalysisEngine = {
       const domainParts = hostname.split('.');
       const subdomainsCount = Math.max(0, domainParts.length - 2);
 
-      // Run threat detector checks
-      const threatFindings = urlDetector.detectAll(parsedUrl, rawUrl);
+      // Run threat detector checks respecting settings
+      const threatFindings = urlDetector.detectAll(parsedUrl, rawUrl, settings);
 
       // Calculate total score penalty
       const totalPenalty = threatFindings.reduce((sum, t) => sum + (t.penalty || 0), 0);

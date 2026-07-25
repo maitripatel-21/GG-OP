@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { browserService } from '../services/browser/chrome';
 import { urlAnalysisEngine } from '../services/url/urlAnalysisEngine';
+import { storageService } from '../services/storage/chromeStorage';
 
 /**
  * Custom React Hook for Popup URL Analysis & Real-Time Tab Sync
@@ -14,10 +15,11 @@ export function useUrlAnalyzer() {
     setIsScanning(true);
     try {
       const activeTab = await browserService.getActiveTab();
+      const settings = await storageService.getSettings();
       const targetUrl = activeTab?.url || 'https://github.com';
       setActiveTabUrl(targetUrl);
 
-      const result = urlAnalysisEngine.analyze(targetUrl);
+      const result = urlAnalysisEngine.analyze(targetUrl, settings);
       setAnalysisResult(result);
     } catch (err) {
       console.error('[useUrlAnalyzer] Error scanning tab:', err);

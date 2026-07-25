@@ -4,7 +4,7 @@ import { DEFAULT_SETTINGS } from '../constants/securityConstants';
 
 /**
  * Custom React Hook for Settings Management
- * Isolates settings persistence, dark mode toggling, and reset logic from UI
+ * Isolates settings persistence, dark mode DOM class toggling, and reset logic
  */
 export function useSettings() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
@@ -27,7 +27,19 @@ export function useSettings() {
     loadSettings();
   }, [loadSettings]);
 
-  // Update a single or multiple setting keys
+  // Sync Dark Mode state dynamically to the <html> document root element
+  useEffect(() => {
+    const isDark = settings.darkMode ?? true;
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+      document.body.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark');
+    }
+  }, [settings.darkMode]);
+
+  // Update single or multiple setting keys and sync across runtime
   const updateSetting = async (keyOrPartial, value) => {
     let partial = {};
     if (typeof keyOrPartial === 'string') {
@@ -38,14 +50,24 @@ export function useSettings() {
 
     const updated = await storageService.saveSettings(partial);
     setSettings(updated);
+
+    // Broadcast to runtime worker so background inspection updates settings live
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+      chrome.runtime.sendMessage({ action: 'SAVE_SETTINGS', settings: updated }).catch(() => {});
+    }
   };
 
-  // Reset all settings to default values
+  // Reset all settings to default factory values
   const resetSettings = async () => {
     const defaultState = await storageService.resetSettings();
     setSettings(defaultState);
     setResetSuccess(true);
     setTimeout(() => setResetSuccess(false), 3000);
+
+    // Broadcast reset to background worker
+    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+      chrome.runtime.sendMessage({ action: 'SAVE_SETTINGS', settings: defaultState }).catch(() => {});
+    }
   };
 
   return {
