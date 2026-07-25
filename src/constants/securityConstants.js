@@ -24,7 +24,6 @@ export const DEFAULT_SETTINGS = {
   checkShorteners: true,
   checkKeywords: true,
   notificationsEnabled: true,
-  darkMode: true,
 };
 
 export const MOCK_TAB_DATA = {

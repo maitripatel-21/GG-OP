@@ -5,7 +5,6 @@ import GlassContainer from '../../components/common/GlassContainer';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import FadeIn from '../../components/animations/FadeIn';
 import {
-  Moon,
   Lock,
   ShieldAlert,
   Search,
@@ -39,22 +38,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* 1. General & UI Appearance Section */}
-      <SettingsSection
-        title="General & UI Appearance"
-        description="Customize the visual theme and interface mode"
-        icon={Moon}
-      >
-        <SettingsToggleRow
-          title="Dark Mode Theme"
-          description="Enable dark glassmorphic cybersecurity color palette"
-          enabled={settings.darkMode ?? true}
-          onChange={(val) => updateSetting('darkMode', val)}
-          icon={Moon}
-        />
-      </SettingsSection>
-
-      {/* 2. Security Threat Inspection Engine Section */}
+      {/* 1. Security Threat Inspection Engine Section */}
       <SettingsSection
         title="Security & Threat Inspection Engine"
         description="Enable or disable specific heuristic security detection rules"
@@ -101,7 +85,7 @@ export default function SettingsPage() {
         />
       </SettingsSection>
 
-      {/* 3. Notifications & Alert Banners Section */}
+      {/* 2. Notifications & Alert Banners Section */}
       <SettingsSection
         title="Notifications & Alert Overlays"
         description="Configure browser notifications and top warning banners"
@@ -124,7 +108,7 @@ export default function SettingsPage() {
         />
       </SettingsSection>
 
-      {/* 4. Persistent Storage & Reset Settings Section */}
+      {/* 3. Persistent Storage & Reset Settings Section */}
       <GlassContainer className="p-6 space-y-4 border-white/10">
         <div className="flex items-center justify-between border-b border-white/10 pb-3">
           <div className="flex items-center gap-3">

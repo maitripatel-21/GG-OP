@@ -4,7 +4,7 @@ import { DEFAULT_SETTINGS } from '../constants/securityConstants';
 
 /**
  * Custom React Hook for Settings Management
- * Isolates settings persistence, dark mode DOM class toggling, and reset logic
+ * Isolates settings persistence and reset logic
  */
 export function useSettings() {
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
@@ -26,18 +26,6 @@ export function useSettings() {
   useEffect(() => {
     loadSettings();
   }, [loadSettings]);
-
-  // Sync Dark Mode state dynamically to the <html> document root element
-  useEffect(() => {
-    const isDark = settings.darkMode ?? true;
-    if (isDark) {
-      document.documentElement.classList.add('dark');
-      document.body.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      document.body.classList.remove('dark');
-    }
-  }, [settings.darkMode]);
 
   // Update single or multiple setting keys and sync across runtime
   const updateSetting = async (keyOrPartial, value) => {
