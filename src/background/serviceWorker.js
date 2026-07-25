@@ -48,4 +48,4 @@ if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage)
   });
 }
 
-console.log('[GorillazGuard Worker] Security Engine & Manifest V3 Worker Ready.');
+console.log('[Gorillaz Guard Worker] Security Engine & Manifest V3 Worker Ready.');

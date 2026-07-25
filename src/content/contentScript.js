@@ -4,7 +4,7 @@
  */
 
 (() => {
-  console.log('[BrowserGuard Content Script] Active on current domain.');
+  console.log('[Gorillaz Guard Content Script] Active on current domain.');
 
   // Listen for potential security actions broadcast from background worker
   if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
