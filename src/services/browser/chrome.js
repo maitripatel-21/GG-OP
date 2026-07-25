@@ -1,11 +1,12 @@
 import { MOCK_TAB_DATA } from '../../constants/securityConstants';
 
 /**
- * Chrome Browser API Wrapper Service
+ * Chrome Extension API Service Wrapper
+ * Provides safe abstractions around chrome.tabs, chrome.runtime, and chrome.action
  */
 export const browserService = {
   /**
-   * Get active tab details from Chrome browser or return mock in standalone dev mode
+   * Get active browser tab details or fallback mock data
    * @returns {Promise<object>}
    */
   async getActiveTab() {
@@ -21,7 +22,7 @@ export const browserService = {
       });
     }
 
-    // Return realistic mock data when running outside Chrome Extension context
+    // Standalone Web Dev Fallback
     return {
       id: 101,
       url: MOCK_TAB_DATA.url,
@@ -30,7 +31,7 @@ export const browserService = {
   },
 
   /**
-   * Send runtime message to extension background service worker
+   * Send runtime message to background service worker
    * @param {object} message
    * @returns {Promise<any>}
    */
@@ -38,15 +39,15 @@ export const browserService = {
     if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
       return new Promise((resolve) => {
         chrome.runtime.sendMessage(message, (response) => {
-          resolve(response);
+          resolve(response || { status: 'acknowledged' });
         });
       });
     }
-    return { status: 'mock_ack', data: null };
+    return { status: 'mock_acknowledged', data: null };
   },
 
   /**
-   * Open Extension Dashboard / Options page in a new browser tab
+   * Open full-screen Security Dashboard / Options page
    */
   openOptionsPage() {
     if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.openOptionsPage) {
