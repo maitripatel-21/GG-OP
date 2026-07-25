@@ -1,29 +1,50 @@
-# Browser Guard - Implementation Roadmap
+# Gorillaz Guard - Future Development Roadmap
 
-## Development Milestones
+## Project Milestones & Future Engineering Goals
 
-### Phase 1: Baseline Architecture & Popup Security (Current)
-- [x] Project directory hierarchy & baseline docs
-- [ ] Build configuration (Vite, Tailwind, PostCSS, ESLint, Prettier, Manifest V3)
-- [ ] Glassmorphic dark design system & reusable atomic components
-- [ ] Active tab inspection & protocol detection (HTTPS vs HTTP)
-- [ ] Real-time Safety Score engine (0 - 100)
-- [ ] Popup interface with glassmorphic cards and dynamic status gauge
+### Phase 1: Core Extension & Baseline UI (Completed)
+- [x] Chromium Manifest V3 baseline setup
+- [x] Decoupled React + Vite multi-entry architecture
+- [x] Tailwind CSS glassmorphic dark design system
+- [x] Radial SVG Safety Score meter
+- [x] Basic popup interface
 
-### Phase 2: Heuristic Threat Engine & Warning Injection
-- [ ] IP-address host detection (`http://192.168.1.1/login`)
-- [ ] URL shortener identifier (bit.ly, tinyurl, t.co, etc.)
-- [ ] Excessive subdomain & entropy analyzer (`login.paypal.secure.account-update.xyz`)
-- [ ] Phishing keyword heuristic scanner (verify, login, banking, update, account)
-- [ ] Content script warning banner overlay on unsafe sites
+### Phase 2: Complete Heuristic Engine & DOM Alerts (Completed)
+- [x] HTTP vs HTTPS check
+- [x] IP address hostname detector
+- [x] Excessive subdomain inspector
+- [x] Phishing keyword scanner
+- [x] URL shortener identifier
+- [x] Unsafe port check
+- [x] Percent-encoding & special character checks
+- [x] Glassmorphic content warning overlay injection
 
-### Phase 3: Analytics Dashboard & Security History
-- [ ] Full-screen Options page security dashboard
-- [ ] Browser history security auditor (identifying past visited risky domains)
-- [ ] Safe site whitelisting engine
-- [ ] Threat log analytics charts (Safe vs Suspicious vs Blocked metrics)
+### Phase 3: Analytics Dashboard & Security History (Completed)
+- [x] Full-screen Security Dashboard
+- [x] Browsing history auditor log
+- [x] Safe vs Unsafe websites breakdown
+- [x] Weekly scan analytics trend chart
+- [x] Risk category breakdown metrics
+- [x] Trusted domain whitelist manager
 
-### Phase 4: Preferences & Customization
-- [ ] Granular security toggle preferences (Toggle heuristics, HTTPS enforce, banners)
-- [ ] Whitelist & Custom Rule manager
-- [ ] Notification options & dark theme customizations
+### Phase 4: Production Settings & Storage (Completed)
+- [x] Granular heuristic engine toggles
+- [x] Notifications & alert banner options
+- [x] Persistent `chrome.storage.local` sync
+- [x] Factory reset settings action
+- [x] ErrorBoundary & LoadingSkeletons integration
+- [x] 100% clean ESLint audit & production build
+
+---
+
+## 🔮 Phase 5 & Beyond (Future Engineering Expansion)
+
+1. **Optional Backend Cloud API Integration**:
+   - Microservice backend for real-time threat intelligence lookup (e.g. Google Safe Browsing API, VirusTotal API).
+   - Zero-knowledge hash-based URL lookup to preserve user privacy.
+
+2. **Machine Learning Phishing Classifier**:
+   - On-device lightweight WebAssembly (Wasm) or TensorFlow.js model for detecting zero-day visual phishing site clones.
+
+3. **Team & Enterprise Whitelist Sync**:
+   - Sync whitelisted corporate domains across organization devices via encrypted cloud storage.
