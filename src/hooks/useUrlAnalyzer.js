@@ -16,10 +16,11 @@ export function useUrlAnalyzer() {
     try {
       const activeTab = await browserService.getActiveTab();
       const settings = await storageService.getSettings();
+      const whitelist = (await storageService.get('whitelist')) || [];
       const targetUrl = activeTab?.url || 'https://github.com';
       setActiveTabUrl(targetUrl);
 
-      const result = urlAnalysisEngine.analyze(targetUrl, settings);
+      const result = urlAnalysisEngine.analyze(targetUrl, { ...settings, whitelist });
       setAnalysisResult(result);
     } catch (err) {
       console.error('[useUrlAnalyzer] Error scanning tab:', err);

@@ -4,13 +4,13 @@ import { isIpAddress, isShortenedUrl } from '../../utils/urlUtils';
 import { SAFETY_LEVELS } from '../../constants/securityConstants';
 
 /**
- * Master URL Analysis Engine with Discrete Scoring & VirusTotal API v3 Threat Intelligence
+ * Master URL Analysis Engine with Whitelist Exemption & VirusTotal API v3 Intelligence
  */
 export const urlAnalysisEngine = {
   /**
    * Analyze raw URL synchronously for UI responsiveness
    * @param {string} rawUrl
-   * @param {object} settings Active user security settings
+   * @param {object} settings Active user security settings (including whitelist array)
    * @returns {object} Structured JSON Security Analysis Report
    */
   analyze(rawUrl, settings = {}) {
@@ -35,31 +35,53 @@ export const urlAnalysisEngine = {
       const parsedUrl = new URL(rawUrl);
       const isHttps = parsedUrl.protocol === 'https:';
       const isHttp = parsedUrl.protocol === 'http:';
-      const hostname = parsedUrl.hostname;
+      const hostname = (parsedUrl.hostname || '').toLowerCase();
+
+      // Check if domain is in user whitelist or top legit domains list
+      const whitelist = (settings.whitelist || []).map((d) => d.toLowerCase());
+      const isWhitelisted = whitelist.includes(hostname) || whitelist.some((d) => hostname.endsWith(`.${d}`));
+      const isLegitDomain = urlDetector.isTopLegitDomain(hostname);
+
+      // GUARANTEED SAFE RETURN FOR WHITELISTED OR LEGIT PLATFORMS
+      if (isWhitelisted || isLegitDomain) {
+        return {
+          url: rawUrl,
+          domain: hostname,
+          protocol: parsedUrl.protocol,
+          port: parsedUrl.port || (isHttps ? '443' : '80'),
+          length: rawUrl.length,
+          isHttps,
+          isHttp,
+          isIpHost: isIpAddress(hostname),
+          isShortener: isShortenedUrl(hostname),
+          isLegitDomain: true,
+          isWhitelisted: true,
+          subdomainsCount: Math.max(0, hostname.split('.').length - 2),
+          domainAge: isWhitelisted ? 'User Trusted Whitelist Domain' : 'Verified Major Brand',
+          sslIssuer: isHttps ? 'Verified Certificate Authority (TLS 1.3)' : 'None (Unencrypted)',
+          safetyScore: 100,
+          safetyLevel: SAFETY_LEVELS.SAFE,
+          threatCount: 0,
+          threats: [],
+          timestamp: new Date().toISOString(),
+        };
+      }
 
       // Extract domain parts
       const domainParts = hostname.split('.');
       const subdomainsCount = Math.max(0, domainParts.length - 2);
 
-      // Run discrete threat detector checks
+      // Run threat detector checks
       const threatFindings = urlDetector.detectAll(parsedUrl, rawUrl, settings);
-
-      // Check if domain is verified top legit domain (GitHub, Google, Microsoft, etc.)
-      const isLegitDomain = urlDetector.isTopLegitDomain(hostname);
 
       // Calculate total score penalty
       const totalPenalty = threatFindings.reduce((sum, t) => sum + (t.penalty || 0), 0);
-      let rawScore = 100 - totalPenalty;
-
-      // Guaranteed 100 Score for Verified Legit Domains on HTTPS
-      if (isLegitDomain && isHttps && threatFindings.length === 0) {
-        rawScore = 100;
-      }
+      const rawScore = 100 - totalPenalty;
 
       // Clamp Safety Score between 0 and 100
       const safetyScore = Math.max(0, Math.min(100, rawScore));
 
-      // Discrete safety levels
+      // Determine safety level
       let safetyLevel = SAFETY_LEVELS.SAFE;
       if (safetyScore < 50) {
         safetyLevel = SAFETY_LEVELS.DANGEROUS;
@@ -77,9 +99,10 @@ export const urlAnalysisEngine = {
         isHttp,
         isIpHost: isIpAddress(hostname),
         isShortener: isShortenedUrl(hostname),
-        isLegitDomain,
+        isLegitDomain: false,
+        isWhitelisted: false,
         subdomainsCount,
-        domainAge: isLegitDomain ? '15+ years (Verified Brand)' : this.estimateDomainAge(hostname),
+        domainAge: this.estimateDomainAge(hostname),
         sslIssuer: isHttps ? 'Verified Certificate Authority (TLS 1.3)' : 'None (Unencrypted)',
         safetyScore,
         safetyLevel,
@@ -100,7 +123,7 @@ export const urlAnalysisEngine = {
    */
   async analyzeAsync(rawUrl, settings = {}) {
     const report = this.analyze(rawUrl, settings);
-    if (report.protocol === 'system:' || report.isLegitDomain) {
+    if (report.protocol === 'system:' || report.isLegitDomain || report.isWhitelisted) {
       return report;
     }
 
@@ -168,6 +191,7 @@ export const urlAnalysisEngine = {
       isIpHost: false,
       isShortener: false,
       isLegitDomain: true,
+      isWhitelisted: true,
       subdomainsCount: 0,
       domainAge: 'Internal System',
       sslIssuer: 'Browser Core',

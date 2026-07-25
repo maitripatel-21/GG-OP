@@ -31,7 +31,7 @@ function updateActionBadge(tabId, safetyScore, safetyLevel) {
 
 // Save inspected site into persistent history log
 async function logSiteToHistory(analysis) {
-  if (!analysis || !analysis.domain || analysis.domain === 'Internal Browser Page') return;
+  if (!analysis || !analysis.domain || analysis.domain === 'Internal Browser Page' || analysis.isWhitelisted) return;
 
   try {
     const existingHistory = (await storageService.get('security_history')) || [];
@@ -62,25 +62,19 @@ async function inspectTabUrl(tabId, url) {
     const settings = await storageService.getSettings();
     if (!settings.protectionEnabled) return;
 
-    // Check if domain is whitelisted
     const whitelist = (await storageService.get('whitelist')) || [];
-    let domain = '';
-    try {
-      domain = new URL(url).hostname;
-    } catch {
-      domain = url;
-    }
 
-    if (whitelist.includes(domain.toLowerCase())) {
-      updateActionBadge(tabId, 100, 'SAFE');
-      // Remove any warning banner if whitelisted
+    // Run master URL analysis engine with active whitelist
+    const analysis = urlAnalysisEngine.analyze(url, { ...settings, whitelist });
+
+    // Update action badge (100 SAFE for whitelisted platforms)
+    updateActionBadge(tabId, analysis.safetyScore, analysis.safetyLevel);
+
+    if (analysis.isWhitelisted || analysis.isLegitDomain) {
+      // Remove any warning banner on whitelisted or legit sites
       chrome.tabs.sendMessage(tabId, { action: 'REMOVE_WARNING_BANNER' }).catch(() => {});
       return;
     }
-
-    // Run master URL analysis engine
-    const analysis = urlAnalysisEngine.analyze(url);
-    updateActionBadge(tabId, analysis.safetyScore, analysis.safetyLevel);
 
     // Save to history logs
     await logSiteToHistory(analysis);
@@ -95,9 +89,7 @@ async function inspectTabUrl(tabId, url) {
           threatCount: analysis.threatCount,
           reason: `High Risk Site (Safety Score: ${analysis.safetyScore}/100)`,
         },
-      }).catch(() => {
-        // Content script connection fallback
-      });
+      }).catch(() => {});
     }
   } catch (e) {
     console.error('[Gorillaz Guard Worker] Tab inspection failed:', e);
@@ -128,21 +120,22 @@ if (typeof chrome !== 'undefined' && chrome.tabs && chrome.tabs.onActivated) {
 if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const handleAsync = async () => {
+      const settings = await storageService.getSettings();
+      const whitelist = (await storageService.get('whitelist')) || [];
+
       switch (request.action) {
         case 'ANALYZE_URL': {
-          const analysis = urlAnalysisEngine.analyze(request.url);
+          const analysis = urlAnalysisEngine.analyze(request.url, { ...settings, whitelist });
           return { status: 'success', analysis };
         }
         case 'GET_SETTINGS': {
-          const settings = await storageService.getSettings();
           return { status: 'success', settings };
         }
         case 'SAVE_SETTINGS': {
-          const settings = await storageService.saveSettings(request.settings);
-          return { status: 'success', settings };
+          const updatedSettings = await storageService.saveSettings(request.settings);
+          return { status: 'success', settings: updatedSettings };
         }
         case 'ADD_WHITELIST': {
-          const whitelist = (await storageService.get('whitelist')) || [];
           const cleanDomain = (request.domain || '').trim().toLowerCase();
           if (cleanDomain && !whitelist.includes(cleanDomain)) {
             const updated = [...whitelist, cleanDomain];
@@ -159,7 +152,6 @@ if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage)
           return { status: 'success', whitelist };
         }
         case 'REMOVE_WHITELIST': {
-          const whitelist = (await storageService.get('whitelist')) || [];
           const updated = whitelist.filter((d) => d !== request.domain);
           await storageService.set('whitelist', updated);
           return { status: 'success', whitelist: updated };
