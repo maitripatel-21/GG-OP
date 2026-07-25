@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useSecurity } from '../../context/SecurityContext';
 import { useDashboardData } from '../../hooks/useDashboardData';
 import GlassContainer from '../../components/common/GlassContainer';
 import StatCard from '../../components/cards/StatCard';
@@ -8,7 +7,6 @@ import SecurityScoreCard from '../../components/cards/SecurityScoreCard';
 import ScanChartCard from '../../components/cards/ScanChartCard';
 import RiskBreakdownCard from '../../components/cards/RiskBreakdownCard';
 import SecurityTipsCard from '../../components/cards/SecurityTipsCard';
-import ToggleSwitch from '../../components/common/ToggleSwitch';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import FadeIn from '../../components/animations/FadeIn';
 import LandingPage from '../Landing/LandingPage';
@@ -18,7 +16,6 @@ import {
   Activity,
   ShieldCheck,
   ShieldAlert,
-  Settings as SettingsIcon,
   ListFilter,
   Plus,
   Trash2,
@@ -29,7 +26,6 @@ import {
  * Gorillaz Guard - Production Security Dashboard Component
  */
 export default function DashboardPage() {
-  const { settings, updateSettings } = useSecurity();
   const {
     metrics,
     historyList,
