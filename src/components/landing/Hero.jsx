@@ -8,7 +8,7 @@ import { browserService } from '../../services/browser/chrome';
 /**
  * Reusable Cyber Hero Section Component
  */
-export default function Hero({ onExplore }) {
+export default function Hero({ onExplore, onLaunchDashboard }) {
   return (
     <section className="relative pt-12 pb-16 md:pt-20 md:pb-24 max-w-7xl mx-auto px-4 sm:px-6">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -63,8 +63,8 @@ export default function Hero({ onExplore }) {
             <PrimaryButton
               variant="cyan"
               icon={ShieldCheck}
-              onClick={() => browserService.openOptionsPage()}
-              className="w-full sm:w-auto px-6 py-3.5 text-base"
+              onClick={() => (onLaunchDashboard ? onLaunchDashboard() : browserService.openOptionsPage())}
+              className="w-full sm:w-auto px-6 py-3 text-sm font-bold"
             >
               Launch Dashboard
             </PrimaryButton>

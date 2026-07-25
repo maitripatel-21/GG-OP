@@ -1,63 +1,77 @@
-import { Shield, ExternalLink } from 'lucide-react';
-import PrimaryButton from '../buttons/PrimaryButton';
-import { browserService } from '../../services/browser/chrome';
+import { Shield, LayoutDashboard } from 'lucide-react';
 
 /**
- * Reusable Glassmorphic Landing Navbar Component
+ * Reusable Sleek Minimal Landing & App Navbar Component
  */
-export default function Navbar({ onNavigate }) {
+export default function Navbar({ activeTab = 'landing', onNavigate }) {
   return (
     <header className="sticky top-4 z-50 max-w-7xl mx-auto px-4 sm:px-6">
-      <nav className="glass-panel p-4 rounded-3xl border border-white/10 flex items-center justify-between shadow-glass">
-        {/* Brand Logo & Live Badge */}
-        <div className="flex items-center gap-3 cursor-pointer" onClick={() => onNavigate?.('hero')}>
-          <div className="p-2.5 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-600/30 border border-cyan-500/30 text-guard-cyan shadow-glow">
-            <Shield className="w-6 h-6 animate-pulse" />
+      <nav className="glass-panel p-3.5 rounded-2xl border border-white/10 flex items-center justify-between shadow-sm">
+        {/* Brand Logo */}
+        <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => onNavigate?.('landing')}>
+          <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
+            <Shield className="w-5 h-5" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-extrabold text-white tracking-tight">Gorillaz Guard</span>
-              <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-                Manifest V3
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-400 font-medium">Real-Time Cyber Security</p>
+            <span className="text-base font-bold text-white tracking-tight">Gorillaz Guard</span>
+            <span className="hidden sm:inline-block ml-2 text-[10px] font-semibold text-emerald-400">
+              v1.0.0
+            </span>
           </div>
         </div>
 
-        {/* Navigation Links */}
-        <div className="hidden md:flex items-center gap-6 text-sm font-semibold text-slate-300">
+        {/* Navigation Tabs */}
+        <div className="flex items-center gap-1 sm:gap-2 text-xs font-semibold">
           <button
-            onClick={() => onNavigate?.('features')}
-            className="hover:text-guard-cyan transition-colors"
+            onClick={() => onNavigate?.('landing')}
+            className={`px-3 py-1.5 rounded-xl transition-all ${
+              activeTab === 'landing'
+                ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                : 'text-slate-400 hover:text-white'
+            }`}
           >
-            Features
+            Home
           </button>
           <button
-            onClick={() => onNavigate?.('why')}
-            className="hover:text-guard-cyan transition-colors"
+            onClick={() => onNavigate?.('overview')}
+            className={`px-3 py-1.5 rounded-xl transition-all ${
+              activeTab === 'overview'
+                ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                : 'text-slate-400 hover:text-white'
+            }`}
           >
-            Why Gorillaz Guard
+            Dashboard
           </button>
           <button
-            onClick={() => onNavigate?.('about')}
-            className="hover:text-guard-cyan transition-colors"
+            onClick={() => onNavigate?.('history')}
+            className={`px-3 py-1.5 rounded-xl transition-all ${
+              activeTab === 'history'
+                ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                : 'text-slate-400 hover:text-white'
+            }`}
           >
-            Architecture
+            History
+          </button>
+          <button
+            onClick={() => onNavigate?.('settings')}
+            className={`px-3 py-1.5 rounded-xl transition-all ${
+              activeTab === 'settings'
+                ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            Settings
           </button>
         </div>
 
-        {/* Quick Action Button */}
-        <div className="flex items-center gap-2">
-          <PrimaryButton
-            variant="cyan"
-            icon={ExternalLink}
-            onClick={() => browserService.openOptionsPage()}
-          >
-            Dashboard
-          </PrimaryButton>
-        </div>
+        {/* Quick Launch Dashboard Action */}
+        <button
+          onClick={() => onNavigate?.('overview')}
+          className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-200 border border-white/10 transition-all"
+        >
+          <LayoutDashboard className="w-3.5 h-3.5 text-cyan-400" />
+          <span>Launch</span>
+        </button>
       </nav>
     </header>
   );

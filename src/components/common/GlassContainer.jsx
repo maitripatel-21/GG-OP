@@ -1,5 +1,5 @@
 /**
- * Reusable Glassmorphism Container Component
+ * Reusable Minimal Glassmorphism Container Component
  */
 export default function GlassContainer({
   children,
@@ -8,14 +8,14 @@ export default function GlassContainer({
   onClick,
   variant = 'default',
 }) {
-  const baseStyles = 'rounded-2xl border transition-all duration-300 backdrop-blur-md';
+  const baseStyles = 'rounded-2xl border transition-all duration-200 backdrop-blur-md';
 
   const variants = {
-    default: 'bg-guard-surface/60 border-white/10 shadow-glass',
-    card: 'bg-guard-card/40 border-white/5 shadow-md',
-    interactive: 'bg-white/5 border-white/10 hover:border-guard-cyan/40 hover:bg-white/10',
-    danger: 'bg-guard-rose/10 border-guard-rose/30 shadow-glow-rose',
-    success: 'bg-guard-emerald/10 border-guard-emerald/30 shadow-glow-emerald',
+    default: 'bg-[#0D1320]/75 border-white/5 shadow-sm',
+    card: 'bg-[#151D2D]/40 border-white/5',
+    interactive: 'bg-white/[0.03] border-white/10 hover:border-cyan-500/30 hover:bg-white/[0.06]',
+    danger: 'bg-rose-500/[0.06] border-rose-500/20',
+    success: 'bg-emerald-500/[0.06] border-emerald-500/20',
   };
 
   const hoverStyles = hover ? 'glass-card-hover cursor-pointer' : '';

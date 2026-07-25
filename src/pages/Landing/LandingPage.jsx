@@ -1,5 +1,4 @@
 import BackgroundAnimation from '../../components/animations/BackgroundAnimation';
-import Navbar from '../../components/layout/Navbar';
 import Hero from '../../components/landing/Hero';
 import FeatureCard from '../../components/cards/FeatureCard';
 import WhySection from '../../components/landing/WhySection';
@@ -11,7 +10,7 @@ import { Lock, ShieldAlert, Activity, Settings, Network, Eye } from 'lucide-reac
 /**
  * Gorillaz Guard - Production Landing Page Component
  */
-export default function LandingPage() {
+export default function LandingPage({ onLaunchDashboard }) {
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -69,41 +68,32 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="relative min-h-screen bg-guard-bg text-slate-100 font-sans selection:bg-guard-cyan/30 selection:text-guard-cyan">
-      {/* Animated Glowing Cyber Background */}
+    <div className="relative min-h-screen text-slate-100 font-sans selection:bg-cyan-500/20">
+      {/* Background Glow Animation */}
       <BackgroundAnimation />
 
-      {/* Main Page Layout */}
-      <div className="relative z-10 space-y-16">
-        {/* Navigation Bar */}
-        <Navbar
-          onNavigate={(target) => {
-            if (target === 'features') scrollToSection('features-section');
-            if (target === 'why') scrollToSection('why-section');
-            if (target === 'about') scrollToSection('about-section');
-          }}
-        />
-
+      {/* Main Content Layout */}
+      <div className="relative z-10 space-y-12">
         {/* Hero Section */}
-        <Hero onExplore={() => scrollToSection('features-section')} />
+        <Hero onExplore={() => scrollToSection('features-section')} onLaunchDashboard={onLaunchDashboard} />
 
         {/* Features Grid Section */}
-        <section id="features-section" className="py-16 max-w-7xl mx-auto px-4 sm:px-6 space-y-12">
-          <div className="text-center space-y-3 max-w-3xl mx-auto">
-            <h2 className="text-xs font-extrabold uppercase tracking-widest text-guard-cyan">
-              Complete Feature Suite
+        <section id="features-section" className="py-12 max-w-7xl mx-auto px-4 sm:px-6 space-y-10">
+          <div className="text-center space-y-2 max-w-3xl mx-auto">
+            <h2 className="text-[11px] font-extrabold uppercase tracking-widest text-cyan-400">
+              Complete Security Suite
             </h2>
-            <h3 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-              Enterprise-Grade Protection for Everyday Browsing
+            <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              Enterprise Protection for Everyday Browsing
             </h3>
-            <p className="text-sm text-slate-400">
-              Modular security engines built directly into your browser workflow.
+            <p className="text-xs sm:text-sm text-slate-400">
+              Modular security engines running entirely on-device inside your browser.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {featureList.map((f, index) => (
-              <FadeIn key={index} delay={index * 0.1}>
+              <FadeIn key={index} delay={index * 0.08}>
                 <FeatureCard
                   title={f.title}
                   description={f.description}
@@ -117,13 +107,13 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* Why Gorillaz Guard Section */}
+        {/* Why Section */}
         <WhySection />
 
-        {/* About & Architecture Section */}
+        {/* About Section */}
         <AboutSection />
 
-        {/* Modular Landing Footer */}
+        {/* Footer */}
         <LandingFooter />
       </div>
     </div>

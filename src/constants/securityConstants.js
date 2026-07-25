@@ -28,13 +28,13 @@ export const DEFAULT_SETTINGS = {
 };
 
 export const MOCK_TAB_DATA = {
-  url: 'https://github.com/facebook/react',
+  url: 'https://github.com',
   domain: 'github.com',
   protocol: 'https:',
   isHttps: true,
-  safetyScore: 98,
+  safetyScore: 100,
   safetyLevel: SAFETY_LEVELS.SAFE,
   threats: [],
-  domainAge: '16+ years',
-  sslIssuer: 'DigiCert Global Root CA',
+  domainAge: 'Verified',
+  sslIssuer: 'TLS 1.3',
 };
