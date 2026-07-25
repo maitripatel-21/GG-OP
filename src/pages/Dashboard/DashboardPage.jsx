@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useSecurity } from '../../context/SecurityContext';
 import { useDashboardData } from '../../hooks/useDashboardData';
 import GlassContainer from '../../components/common/GlassContainer';
 import StatCard from '../../components/cards/StatCard';
@@ -28,7 +27,6 @@ import {
  * Defaults to Landing Page view first, with clean navigation tabs to Dashboard, History, Whitelist, and Settings
  */
 export default function DashboardPage() {
-  const { settings, updateSettings } = useSecurity();
   const {
     metrics,
     historyList,
