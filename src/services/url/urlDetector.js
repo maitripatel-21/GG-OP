@@ -3,8 +3,8 @@ import {
   isIpAddress,
   isShortenedUrl,
   isUnsafePort,
-  containsEncodedCharacters,
-  countSpecialCharacters,
+  isEncodedUrl,
+  countSpecialChars,
 } from '../../utils/urlUtils';
 
 /**
@@ -103,7 +103,7 @@ export const urlDetector = {
     }
 
     // 6. Unsafe Network Port
-    if (parsedUrl.port && isUnsafePort(parsedUrl.port)) {
+    if (parsedUrl.port && isUnsafePort(parsedUrl.port, parsedUrl.protocol)) {
       threats.push({
         id: 'UNSAFE_PORT',
         title: 'Non-Standard Network Port',
@@ -125,7 +125,7 @@ export const urlDetector = {
     }
 
     // 8. Percent-Encoded Obfuscation
-    if (containsEncodedCharacters(rawUrl)) {
+    if (isEncodedUrl(rawUrl)) {
       threats.push({
         id: 'ENCODED_URL',
         title: 'Percent-Encoded Obfuscation',
@@ -136,7 +136,7 @@ export const urlDetector = {
     }
 
     // 9. Suspicious Special Characters
-    const specialCount = countSpecialCharacters(rawUrl);
+    const specialCount = countSpecialChars(rawUrl);
     if (specialCount > 5) {
       threats.push({
         id: 'SPECIAL_CHARACTERS',
