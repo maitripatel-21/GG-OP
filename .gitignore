@@ -1,3 +1,10 @@
+# Secrets & Local Environment Variables
+.env
+.env.local
+.env.*.local
+*.pem
+*.crx
+
 # Dependencies
 node_modules/
 .pnpm-store/
@@ -6,15 +13,13 @@ node_modules/
 dist/
 dist-zip/
 
-# Local Environment & Logs
-.env
-.env.local
-.env.*.local
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
 # Editor & System Files
+.vs/
 .vscode/
 .idea/
 *.suo

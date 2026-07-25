@@ -1,9 +1,9 @@
 /**
  * VirusTotal API v3 Threat Intelligence Service
- * Integrates live VirusTotal domain security lookups
+ * Integrates live VirusTotal domain security lookups safely via environment variables
  */
 
-const VIRUSTOTAL_API_KEY = 'c9b5b7f592338d5d683a704ebc246b8b9b048a8a9e003ab4a57e7b99464fa610';
+const VIRUSTOTAL_API_KEY = import.meta.env?.VITE_VIRUSTOTAL_API_KEY || '';
 const VT_DOMAIN_ENDPOINT = 'https://www.virustotal.com/api/v3/domains/';
 
 // In-memory lookup cache to avoid unnecessary API rate limit calls
@@ -16,7 +16,7 @@ export const virusTotalService = {
    * @returns {Promise<object|null>} VirusTotal analysis report summary
    */
   async checkDomain(domain) {
-    if (!domain || typeof domain !== 'string') return null;
+    if (!domain || typeof domain !== 'string' || !VIRUSTOTAL_API_KEY) return null;
 
     const cleanDomain = domain.toLowerCase().trim();
 
