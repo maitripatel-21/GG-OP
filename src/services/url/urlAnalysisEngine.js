@@ -4,7 +4,7 @@ import { SAFETY_LEVELS } from '../../constants/securityConstants';
 
 /**
  * Master URL Analysis Engine
- * Encapsulates full client-side URL parsing, threat detection, and structured JSON output
+ * Encapsulates full client-side URL parsing, internal browser URL handling, threat detection, and structured JSON output
  */
 export const urlAnalysisEngine = {
   /**
@@ -14,7 +14,19 @@ export const urlAnalysisEngine = {
    */
   analyze(rawUrl) {
     if (!rawUrl || typeof rawUrl !== 'string') {
-      return this.createFallbackReport('Invalid URL');
+      return this.createSystemReport(rawUrl || 'Invalid URL', 'System Page');
+    }
+
+    // Handle internal browser URLs safely
+    if (
+      rawUrl.startsWith('chrome://') ||
+      rawUrl.startsWith('chrome-extension://') ||
+      rawUrl.startsWith('edge://') ||
+      rawUrl.startsWith('brave://') ||
+      rawUrl.startsWith('about:') ||
+      rawUrl.startsWith('blob:')
+    ) {
+      return this.createSystemReport(rawUrl, 'Internal Browser Page');
     }
 
     try {
@@ -66,12 +78,12 @@ export const urlAnalysisEngine = {
         timestamp: new Date().toISOString(),
       };
     } catch {
-      return this.createFallbackReport(rawUrl);
+      return this.createSystemReport(rawUrl, 'Unparseable Domain');
     }
   },
 
   /**
-   * Domain age estimator placeholder
+   * Domain age estimator
    * @param {string} hostname
    * @returns {string}
    */
@@ -88,26 +100,34 @@ export const urlAnalysisEngine = {
   },
 
   /**
-   * Fallback structured JSON report for invalid inputs
+   * Internal/System Page Report
    * @param {string} inputUrl
+   * @param {string} label
    * @returns {object}
    */
-  createFallbackReport(inputUrl) {
+  createSystemReport(inputUrl, label = 'System Page') {
+    let domain = label;
+    try {
+      domain = new URL(inputUrl).hostname || label;
+    } catch {
+      domain = label;
+    }
+
     return {
       url: inputUrl || '',
-      domain: inputUrl || 'Unknown',
-      protocol: 'unknown:',
-      port: 'unknown',
+      domain,
+      protocol: 'system:',
+      port: 'none',
       length: (inputUrl || '').length,
-      isHttps: false,
+      isHttps: true,
       isHttp: false,
       isIpHost: false,
       isShortener: false,
       subdomainsCount: 0,
-      domainAge: 'Unknown',
-      sslIssuer: 'None',
-      safetyScore: 50,
-      safetyLevel: SAFETY_LEVELS.WARNING,
+      domainAge: 'Internal System',
+      sslIssuer: 'Browser Core',
+      safetyScore: 100,
+      safetyLevel: SAFETY_LEVELS.SAFE,
       threatCount: 0,
       threats: [],
       timestamp: new Date().toISOString(),

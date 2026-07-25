@@ -16,7 +16,7 @@ function updateActionBadge(tabId, safetyScore, safetyLevel) {
 
     if (safetyLevel === 'DANGEROUS' || safetyScore < 50) {
       badgeText = 'RISK';
-      badgeColor = '#F43F5E'; // Red for DANGEROUS
+      badgeColor = '#E2454A'; // Crimson Red for DANGEROUS
     } else if (safetyLevel === 'WARNING' || safetyScore < 80) {
       badgeText = 'WARN';
       badgeColor = '#F59E0B'; // Amber for WARNING
@@ -31,7 +31,7 @@ function updateActionBadge(tabId, safetyScore, safetyLevel) {
 
 // Save inspected site into persistent history log
 async function logSiteToHistory(analysis) {
-  if (!analysis || !analysis.domain) return;
+  if (!analysis || !analysis.domain || analysis.domain === 'Internal Browser Page') return;
 
   try {
     const existingHistory = (await storageService.get('security_history')) || [];
@@ -39,7 +39,7 @@ async function logSiteToHistory(analysis) {
       id: `h-${Date.now()}`,
       domain: analysis.domain,
       url: analysis.url,
-      timestamp: 'Just now',
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       safetyScore: analysis.safetyScore,
       safetyLevel: analysis.safetyLevel,
       threatCount: analysis.threatCount,
@@ -56,7 +56,7 @@ async function logSiteToHistory(analysis) {
 
 // Active URL Inspector Handler
 async function inspectTabUrl(tabId, url) {
-  if (!url || !url.startsWith('http')) return;
+  if (!url || typeof url !== 'string' || !url.startsWith('http')) return;
 
   try {
     const settings = await storageService.getSettings();
@@ -71,8 +71,10 @@ async function inspectTabUrl(tabId, url) {
       domain = url;
     }
 
-    if (whitelist.includes(domain)) {
+    if (whitelist.includes(domain.toLowerCase())) {
       updateActionBadge(tabId, 100, 'SAFE');
+      // Remove any warning banner if whitelisted
+      chrome.tabs.sendMessage(tabId, { action: 'REMOVE_WARNING_BANNER' }).catch(() => {});
       return;
     }
 
@@ -94,7 +96,7 @@ async function inspectTabUrl(tabId, url) {
           reason: `High Risk Site (Safety Score: ${analysis.safetyScore}/100)`,
         },
       }).catch(() => {
-        // Ignore connection errors if content script is still initializing
+        // Content script connection fallback
       });
     }
   } catch (e) {
@@ -105,7 +107,7 @@ async function inspectTabUrl(tabId, url) {
 // 1. Tab Updated Listener (Navigation / Reload)
 if (typeof chrome !== 'undefined' && chrome.tabs && chrome.tabs.onUpdated) {
   chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-    if (changeInfo.status === 'complete' && tab.url) {
+    if (changeInfo.status === 'complete' && tab && tab.url) {
       inspectTabUrl(tabId, tab.url);
     }
   });
@@ -141,12 +143,26 @@ if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage)
         }
         case 'ADD_WHITELIST': {
           const whitelist = (await storageService.get('whitelist')) || [];
-          if (!whitelist.includes(request.domain)) {
-            const updated = [...whitelist, request.domain];
+          const cleanDomain = (request.domain || '').trim().toLowerCase();
+          if (cleanDomain && !whitelist.includes(cleanDomain)) {
+            const updated = [...whitelist, cleanDomain];
             await storageService.set('whitelist', updated);
+
+            // Update badge & remove banner if currently viewing this tab
+            if (sender && sender.tab && sender.tab.id) {
+              updateActionBadge(sender.tab.id, 100, 'SAFE');
+              chrome.tabs.sendMessage(sender.tab.id, { action: 'REMOVE_WARNING_BANNER' }).catch(() => {});
+            }
+
             return { status: 'success', whitelist: updated };
           }
           return { status: 'success', whitelist };
+        }
+        case 'REMOVE_WHITELIST': {
+          const whitelist = (await storageService.get('whitelist')) || [];
+          const updated = whitelist.filter((d) => d !== request.domain);
+          await storageService.set('whitelist', updated);
+          return { status: 'success', whitelist: updated };
         }
         default:
           return { status: 'unknown_action' };

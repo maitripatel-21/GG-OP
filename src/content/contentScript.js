@@ -4,6 +4,10 @@
  */
 
 (() => {
+  // Prevent duplicate script execution
+  if (window.__ggContentScriptLoaded) return;
+  window.__ggContentScriptLoaded = true;
+
   console.log('[Gorillaz Guard Content Script] Active on current web page.');
 
   // Listen for runtime messages from background service worker
@@ -32,11 +36,11 @@
       top: 0;
       left: 0;
       width: 100%;
-      background: rgba(17, 24, 39, 0.95);
+      background: rgba(22, 25, 34, 0.95);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border-bottom: 2px solid rgba(244, 63, 94, 0.8);
-      color: #FFFFFF;
+      border-bottom: 2px solid rgba(226, 69, 74, 0.8);
+      color: #F5F5F5;
       font-family: system-ui, -apple-system, sans-serif;
       font-size: 13px;
       font-weight: 500;
@@ -45,7 +49,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
       box-sizing: border-box;
     `;
 
@@ -54,20 +58,20 @@
 
     banner.innerHTML = `
       <div style="display: flex; align-items: center; gap: 12px;">
-        <div style="padding: 6px 10px; border-radius: 9999px; background: rgba(244, 63, 94, 0.2); border: 1px solid rgba(244, 63, 94, 0.4); color: #F43F5E; font-weight: 700; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+        <div style="padding: 6px 10px; border-radius: 9999px; background: rgba(226, 69, 74, 0.2); border: 1px solid rgba(226, 69, 74, 0.5); color: #E2454A; font-weight: 700; font-size: 12px; display: flex; align-items: center; gap: 6px;">
           <span>⚠️</span>
           <span>DANGEROUS SITE (Score: ${safetyScore}/100)</span>
         </div>
-        <span style="color: #E2E8F0;">
+        <span style="color: #F5F5F5;">
           <strong>Gorillaz Guard Alert:</strong> High risk security indicators detected on <strong>${domainName}</strong>. Avoid entering passwords or sensitive information.
         </span>
       </div>
 
       <div style="display: flex; align-items: center; gap: 8px;">
-        <button id="gg-trust-domain-btn" style="background: rgba(6, 182, 212, 0.2); border: 1px solid rgba(6, 182, 212, 0.4); color: #06B6D4; padding: 5px 12px; border-radius: 8px; font-weight: 600; font-size: 12px; cursor: pointer; transition: all 0.2s;">
+        <button id="gg-trust-domain-btn" style="background: rgba(226, 69, 74, 0.2); border: 1px solid rgba(226, 69, 74, 0.5); color: #E2454A; padding: 5px 12px; border-radius: 8px; font-weight: 600; font-size: 12px; cursor: pointer; transition: all 0.2s;">
           Trust Domain
         </button>
-        <button id="gg-dismiss-banner-btn" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.15); color: #CBD5E1; padding: 5px 12px; border-radius: 8px; font-weight: 600; font-size: 12px; cursor: pointer; transition: all 0.2s;">
+        <button id="gg-dismiss-banner-btn" style="background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.15); color: #DADADA; padding: 5px 12px; border-radius: 8px; font-weight: 600; font-size: 12px; cursor: pointer; transition: all 0.2s;">
           Dismiss
         </button>
       </div>
