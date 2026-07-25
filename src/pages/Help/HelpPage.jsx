@@ -5,11 +5,9 @@ import FadeIn from '../../components/animations/FadeIn';
 import {
   HelpCircle,
   ShieldCheck,
-  Lock,
   Search,
   ChevronDown,
   ChevronUp,
-  FileText,
   Github,
   Key,
   Download,
@@ -147,28 +145,6 @@ export default function HelpPage() {
             </div>
           ))}
         </div>
-      </GlassContainer>
-
-      {/* Documentation Quick Links Card */}
-      <GlassContainer className="p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-            <FileText className="w-5 h-5" />
-          </div>
-          <div>
-            <h4 className="text-sm font-bold text-white">Looking for Architecture or Setup Guides?</h4>
-            <p className="text-xs text-slate-400">Explore technical documentation and installation blueprints in the repository</p>
-          </div>
-        </div>
-
-        <PrimaryButton
-          variant="cyan"
-          icon={Lock}
-          onClick={() => window.open('https://github.com/maitripatel-21/GG-OP/tree/main/docs', '_blank')}
-          className="shrink-0 text-xs"
-        >
-          Explore Docs
-        </PrimaryButton>
       </GlassContainer>
     </FadeIn>
   );
