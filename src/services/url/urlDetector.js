@@ -7,13 +7,56 @@ import {
   countSpecialChars,
 } from '../../utils/urlUtils';
 
+// Authoritative Top Verified Legit Domains (Exempt from login keyword false positives)
+const TOP_LEGIT_DOMAINS = [
+  'github.com',
+  'google.com',
+  'accounts.google.com',
+  'microsoft.com',
+  'login.live.com',
+  'login.microsoftonline.com',
+  'apple.com',
+  'idmsa.apple.com',
+  'amazon.com',
+  'youtube.com',
+  'facebook.com',
+  'twitter.com',
+  'x.com',
+  'linkedin.com',
+  'wikipedia.org',
+  'netflix.com',
+  'instagram.com',
+  'stackoverflow.com',
+  'gitlab.com',
+  'bitbucket.org',
+  'paypal.com',
+  'dropbox.com',
+  'slack.com',
+  'zoom.us',
+  'notion.so',
+  'figma.com',
+  'atlassian.com',
+  'adobe.com',
+];
+
 /**
- * URL Threat Detector Service
- * Evaluates individual threat vectors respecting user settings preferences
+ * Discrete URL Threat Detector Service
+ * Eliminates false positives on legit websites (GitHub, Google, Microsoft, etc.)
  */
 export const urlDetector = {
   /**
-   * Detect all threat vectors in URL
+   * Check if domain is a verified legit popular domain
+   * @param {string} hostname
+   * @returns {boolean}
+   */
+  isTopLegitDomain(hostname) {
+    if (!hostname) return false;
+    const lower = hostname.toLowerCase();
+    return TOP_LEGIT_DOMAINS.some((d) => lower === d || lower.endsWith(`.${d}`));
+  },
+
+  /**
+   * Detect all threat vectors in URL with discrete scoring logic
    * @param {URL} parsedUrl
    * @param {string} rawUrl
    * @param {object} settings Active user security settings
@@ -21,7 +64,8 @@ export const urlDetector = {
    */
   detectAll(parsedUrl, rawUrl, settings = {}) {
     const threats = [];
-    const hostname = parsedUrl.hostname || '';
+    const hostname = (parsedUrl.hostname || '').toLowerCase();
+    const isLegitDomain = this.isTopLegitDomain(hostname);
 
     // Default settings if undefined
     const checkHttps = settings.checkHttps ?? true;
@@ -62,9 +106,9 @@ export const urlDetector = {
       });
     }
 
-    // 4. Excessive Subdomains (> 2 levels)
+    // 4. Excessive Subdomains (> 3 levels) - Ignore on legit domains like accounts.google.com
     const domainParts = hostname.split('.');
-    if (domainParts.length > 3) {
+    if (!isLegitDomain && domainParts.length > 3) {
       threats.push({
         id: THREAT_TYPES.EXCESSIVE_SUBDOMAINS,
         title: 'Excessive Subdomains',
@@ -74,28 +118,27 @@ export const urlDetector = {
       });
     }
 
-    // 5. Phishing Keywords in URL
-    if (checkKeywords) {
+    // 5. Phishing Keywords in URL - EXEMPT verified legit domains (GitHub, Google, Microsoft, etc.)
+    if (checkKeywords && !isLegitDomain) {
       const suspiciousKeywords = [
-        'login',
-        'signin',
-        'account',
-        'banking',
-        'verify',
-        'secure-login',
-        'update-password',
-        'wallet-connect',
-        'paypal-security',
-        'appleid-verify',
+        'login-verify',
+        'signin-security',
+        'account-update',
+        'banking-verify',
+        'secure-login-attempt',
+        'update-password-now',
+        'wallet-connect-claim',
+        'paypal-security-alert',
+        'appleid-verify-user',
       ];
       const lowerUrl = rawUrl.toLowerCase();
       const matchedKeywords = suspiciousKeywords.filter((kw) => lowerUrl.includes(kw));
 
-      if (matchedKeywords.length > 0 && !hostname.includes('google.com') && !hostname.includes('github.com')) {
+      if (matchedKeywords.length > 0) {
         threats.push({
           id: THREAT_TYPES.PHISHING_KEYWORDS,
-          title: 'Suspicious Credential Keywords',
-          description: `URL contains potential phishing keywords: "${matchedKeywords.join(', ')}".`,
+          title: 'Suspicious Spoofing Keywords',
+          description: `URL contains potential phishing spoofing phrases: "${matchedKeywords.join(', ')}".`,
           severity: 'HIGH',
           penalty: 25,
         });
@@ -113,19 +156,19 @@ export const urlDetector = {
       });
     }
 
-    // 7. Excessive URL Length (> 75 chars)
-    if (rawUrl.length > 75) {
+    // 7. Excessive URL Length (> 100 chars) - Ignore on legit domains
+    if (!isLegitDomain && rawUrl.length > 100) {
       threats.push({
         id: 'LONG_URL',
-        title: 'Excessively Long URL',
-        description: `URL length is ${rawUrl.length} characters long. Long URLs are often used to hide deceptive domain names.`,
+        title: 'Excessively Long Deceptive URL',
+        description: `URL is ${rawUrl.length} characters long, commonly used to hide deceptive domain names.`,
         severity: 'LOW',
-        penalty: 15,
+        penalty: 10,
       });
     }
 
     // 8. Percent-Encoded Obfuscation
-    if (isEncodedUrl(rawUrl)) {
+    if (!isLegitDomain && isEncodedUrl(rawUrl)) {
       threats.push({
         id: 'ENCODED_URL',
         title: 'Percent-Encoded Obfuscation',
@@ -136,15 +179,17 @@ export const urlDetector = {
     }
 
     // 9. Suspicious Special Characters
-    const specialCount = countSpecialChars(rawUrl);
-    if (specialCount > 5) {
-      threats.push({
-        id: 'SPECIAL_CHARACTERS',
-        title: 'Excessive Special Characters',
-        description: `Contains ${specialCount} special characters (@, %, -, _), commonly used to obscure links.`,
-        severity: 'MEDIUM',
-        penalty: 15,
-      });
+    if (!isLegitDomain) {
+      const specialCount = countSpecialChars(rawUrl);
+      if (specialCount > 6) {
+        threats.push({
+          id: 'SPECIAL_CHARACTERS',
+          title: 'Excessive Special Characters',
+          description: `Contains ${specialCount} special characters (@, %, -, _), commonly used to obscure links.`,
+          severity: 'MEDIUM',
+          penalty: 15,
+        });
+      }
     }
 
     return threats;
