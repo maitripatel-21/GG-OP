@@ -7,16 +7,14 @@ import {
   countSpecialChars,
 } from '../../utils/urlUtils';
 
-// Authoritative Top Verified Legit Domains (Exempt from login keyword false positives)
+// Authoritative Top Verified Legit Domains
 const TOP_LEGIT_DOMAINS = [
   'github.com',
   'google.com',
   'accounts.google.com',
   'microsoft.com',
-  'login.live.com',
-  'login.microsoftonline.com',
+  'live.com',
   'apple.com',
-  'idmsa.apple.com',
   'amazon.com',
   'youtube.com',
   'facebook.com',
@@ -37,11 +35,12 @@ const TOP_LEGIT_DOMAINS = [
   'figma.com',
   'atlassian.com',
   'adobe.com',
+  'reddit.com',
 ];
 
 /**
- * Discrete URL Threat Detector Service
- * Eliminates false positives on legit websites (GitHub, Google, Microsoft, etc.)
+ * Intelligent URL Threat Detector Service
+ * Completely eliminates false positive keyword flags on legitimate websites (GitHub, Google, etc.)
  */
 export const urlDetector = {
   /**
@@ -56,7 +55,7 @@ export const urlDetector = {
   },
 
   /**
-   * Detect all threat vectors in URL with discrete scoring logic
+   * Detect real threat vectors without flagging standard URL paths (like /login)
    * @param {URL} parsedUrl
    * @param {string} rawUrl
    * @param {object} settings Active user security settings
@@ -66,6 +65,7 @@ export const urlDetector = {
     const threats = [];
     const hostname = (parsedUrl.hostname || '').toLowerCase();
     const isLegitDomain = this.isTopLegitDomain(hostname);
+    const isHttps = parsedUrl.protocol === 'https:';
 
     // Default settings if undefined
     const checkHttps = settings.checkHttps ?? true;
@@ -73,7 +73,7 @@ export const urlDetector = {
     const checkShorteners = settings.checkShorteners ?? true;
     const checkKeywords = settings.checkKeywords ?? true;
 
-    // 1. Unencrypted HTTP Connection
+    // 1. Unencrypted HTTP Connection (Only flag if site lacks SSL/TLS)
     if (checkHttps && parsedUrl.protocol === 'http:') {
       threats.push({
         id: THREAT_TYPES.UNENCRYPTED_HTTP,
@@ -84,7 +84,7 @@ export const urlDetector = {
       });
     }
 
-    // 2. IP Address Hostname
+    // 2. IP Address Hostname (e.g., http://192.168.1.1)
     if (checkIpUrls && isIpAddress(hostname)) {
       threats.push({
         id: THREAT_TYPES.SUSPICIOUS_IP_HOST,
@@ -106,7 +106,7 @@ export const urlDetector = {
       });
     }
 
-    // 4. Excessive Subdomains (> 3 levels) - Ignore on legit domains like accounts.google.com
+    // 4. Excessive Subdomains (> 3 levels) - Never flag legit domains or subdomains
     const domainParts = hostname.split('.');
     if (!isLegitDomain && domainParts.length > 3) {
       threats.push({
@@ -118,27 +118,29 @@ export const urlDetector = {
       });
     }
 
-    // 5. Phishing Keywords in URL - EXEMPT verified legit domains (GitHub, Google, Microsoft, etc.)
+    // 5. Deceptive Domain Phishing Spoofing (NOT standard URL paths like /login or /signin)
+    // Only flag if the DOMAIN ITSELF contains deceptive compound spoofing patterns (e.g. github-verify-login.xyz)
     if (checkKeywords && !isLegitDomain) {
-      const suspiciousKeywords = [
-        'login-verify',
-        'signin-security',
-        'account-update',
-        'banking-verify',
-        'secure-login-attempt',
-        'update-password-now',
-        'wallet-connect-claim',
-        'paypal-security-alert',
-        'appleid-verify-user',
+      const deceptiveDomainPatterns = [
+        '-login-verify',
+        '-signin-security',
+        '-account-update',
+        '-banking-verify',
+        '-secure-login',
+        '-update-password',
+        '-wallet-connect',
+        'paypal-security-',
+        'appleid-verify-',
       ];
-      const lowerUrl = rawUrl.toLowerCase();
-      const matchedKeywords = suspiciousKeywords.filter((kw) => lowerUrl.includes(kw));
 
-      if (matchedKeywords.length > 0) {
+      const matchedPatterns = deceptiveDomainPatterns.filter((pattern) => hostname.includes(pattern));
+
+      // ONLY flag if deceptive pattern is in domain AND connection is unencrypted or non-HTTPS
+      if (matchedPatterns.length > 0 && !isHttps) {
         threats.push({
           id: THREAT_TYPES.PHISHING_KEYWORDS,
-          title: 'Suspicious Spoofing Keywords',
-          description: `URL contains potential phishing spoofing phrases: "${matchedKeywords.join(', ')}".`,
+          title: 'Deceptive Domain Phishing Pattern',
+          description: `Domain contains suspicious phishing spoofing patterns: "${matchedPatterns.join(', ')}".`,
           severity: 'HIGH',
           penalty: 25,
         });
@@ -156,19 +158,19 @@ export const urlDetector = {
       });
     }
 
-    // 7. Excessive URL Length (> 100 chars) - Ignore on legit domains
-    if (!isLegitDomain && rawUrl.length > 100) {
+    // 7. Excessive Deceptive URL Length (> 120 chars) - Exclude legit domains
+    if (!isLegitDomain && !isHttps && rawUrl.length > 120) {
       threats.push({
         id: 'LONG_URL',
         title: 'Excessively Long Deceptive URL',
-        description: `URL is ${rawUrl.length} characters long, commonly used to hide deceptive domain names.`,
+        description: `URL is ${rawUrl.length} characters long on an unencrypted connection.`,
         severity: 'LOW',
         penalty: 10,
       });
     }
 
-    // 8. Percent-Encoded Obfuscation
-    if (!isLegitDomain && isEncodedUrl(rawUrl)) {
+    // 8. Percent-Encoded Obfuscation - Exclude HTTPS legit domains
+    if (!isLegitDomain && !isHttps && isEncodedUrl(rawUrl)) {
       threats.push({
         id: 'ENCODED_URL',
         title: 'Percent-Encoded Obfuscation',
@@ -178,10 +180,10 @@ export const urlDetector = {
       });
     }
 
-    // 9. Suspicious Special Characters
-    if (!isLegitDomain) {
+    // 9. Suspicious Special Characters - Exclude HTTPS legit domains
+    if (!isLegitDomain && !isHttps) {
       const specialCount = countSpecialChars(rawUrl);
-      if (specialCount > 6) {
+      if (specialCount > 8) {
         threats.push({
           id: 'SPECIAL_CHARACTERS',
           title: 'Excessive Special Characters',
