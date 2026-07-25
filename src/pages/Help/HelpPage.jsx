@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import GlassContainer from '../../components/common/GlassContainer';
-import PrimaryButton from '../../components/buttons/PrimaryButton';
 import FadeIn from '../../components/animations/FadeIn';
 import {
   HelpCircle,
@@ -8,7 +7,6 @@ import {
   Search,
   ChevronDown,
   ChevronUp,
-  Github,
   Key,
   Download,
   LifeBuoy,
@@ -55,25 +53,14 @@ export default function HelpPage() {
   return (
     <FadeIn className="space-y-6 max-w-4xl mx-auto font-sans text-slate-100">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-white/10 pb-4">
-        <div>
-          <h2 className="text-2xl font-black text-white flex items-center gap-2">
-            <HelpCircle className="w-6 h-6 text-[#E2454A]" />
-            Help & Knowledge Center
-          </h2>
-          <p className="text-xs text-slate-400">
-            Learn how Gorillaz Guard protects your browsing and explore feature guides
-          </p>
-        </div>
-
-        <PrimaryButton
-          variant="glass"
-          icon={Github}
-          onClick={() => window.open('https://github.com/maitripatel-21/GG-OP', '_blank')}
-          className="text-xs"
-        >
-          View GitHub Repository
-        </PrimaryButton>
+      <div className="border-b border-white/10 pb-4">
+        <h2 className="text-2xl font-black text-white flex items-center gap-2">
+          <HelpCircle className="w-6 h-6 text-[#E2454A]" />
+          Help & Knowledge Center
+        </h2>
+        <p className="text-xs text-slate-400">
+          Learn how Gorillaz Guard protects your browsing and explore feature guides
+        </p>
       </div>
 
       {/* Quick Feature Guides Grid */}
