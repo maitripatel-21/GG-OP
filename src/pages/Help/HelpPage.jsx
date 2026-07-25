@@ -86,7 +86,7 @@ export default function HelpPage() {
           </div>
           <h3 className="text-sm font-bold text-white">Real-Time Extension Popup</h3>
           <p className="text-xs text-slate-400">
-            Click the extension icon in your browser toolbar to instantly inspect the current tab\'s HTTPS status, domain parameters, and threat breakdown.
+            Click the extension icon in your browser toolbar to instantly inspect the current tab&apos;s HTTPS status, domain parameters, and threat breakdown.
           </p>
         </GlassContainer>
 
