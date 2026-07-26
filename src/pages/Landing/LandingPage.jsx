@@ -74,12 +74,8 @@ export default function LandingPage({ onLaunchDashboard }) {
   ];
 
   return (
-    <div className="relative min-h-screen text-slate-100 font-sans selection:bg-cyan-500/20">
-      {/* Background Glow Animation */}
-      <BackgroundAnimation />
-
-      {/* Main Content Layout */}
-      <div className="relative z-10 space-y-12">
+    <BackgroundAnimation>
+      <div className="relative z-10 space-y-12 pb-12">
         {/* Hero Section */}
         <Hero
           onExplore={() => scrollToSection('features-section')}
@@ -92,7 +88,7 @@ export default function LandingPage({ onLaunchDashboard }) {
           className="py-12 max-w-7xl mx-auto px-4 sm:px-6 space-y-10"
         >
           <div className="text-center space-y-2 max-w-3xl mx-auto">
-            <h2 className="text-[11px] font-extrabold uppercase tracking-widest text-cyan-400">
+            <h2 className="text-[11px] font-extrabold uppercase tracking-widest text-[#E2454A]">
               Complete Security Suite
             </h2>
             <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
@@ -128,6 +124,6 @@ export default function LandingPage({ onLaunchDashboard }) {
         {/* Footer */}
         <LandingFooter />
       </div>
-    </div>
+    </BackgroundAnimation>
   );
 }
