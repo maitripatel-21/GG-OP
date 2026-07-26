@@ -58,7 +58,7 @@ export default function DashboardPage() {
   };
 
   const handleExportReport = () => {
-    analyticsService.exportJSONReport(metrics, historyList);
+    analyticsService.exportPDFReport(metrics, historyList);
   };
 
   const handleExportWhitelist = () => {
@@ -98,9 +98,9 @@ export default function DashboardPage() {
                 <p className="text-xs text-slate-400">Live browser history inspection & threat analysis</p>
               </div>
 
-              {/* Feature 1: Export Security Audit Report */}
+              {/* Feature 1: Export Security Audit Report (PDF) */}
               <PrimaryButton variant="cyan" icon={Download} onClick={handleExportReport}>
-                Export Audit Report (JSON)
+                Export Audit Report (PDF)
               </PrimaryButton>
             </div>
 
