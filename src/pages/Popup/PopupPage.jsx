@@ -4,6 +4,7 @@ import Footer from '../../components/layout/Footer';
 import SecurityScoreCard from '../../components/cards/SecurityScoreCard';
 import WebsiteDetailsCard from '../../components/cards/WebsiteDetailsCard';
 import ThreatCard from '../../components/cards/ThreatCard';
+import EngineStatusCard from '../../components/cards/EngineStatusCard';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import LoadingSkeleton from '../../components/common/LoadingSkeleton';
 import FadeIn from '../../components/animations/FadeIn';
@@ -19,7 +20,7 @@ export default function PopupPage() {
   const threats = analysisResult?.threats || [];
 
   return (
-    <div className="p-3.5 space-y-3.5 max-w-[380px] mx-auto select-none font-sans bg-guard-bg text-slate-100 min-h-[560px]">
+    <div className="p-3.5 space-y-3 max-w-[380px] mx-auto select-none font-sans bg-[#0C0E14] text-[#F5F5F5] min-h-[580px]">
       {/* Header */}
       <Header title="Gorillaz Guard" subtitle="Real-Time Protection" />
 
@@ -33,7 +34,9 @@ export default function PopupPage() {
         <>
           {/* Risk Score Radial Gauge */}
           <FadeIn delay={0.1}>
-            <SecurityScoreCard score={analysisResult?.safetyScore ?? 100} />
+            <SecurityScoreCard
+              score={analysisResult?.safetyScore ?? 100}
+            />
           </FadeIn>
 
           {/* Website & Protocol Details Card */}
@@ -41,11 +44,16 @@ export default function PopupPage() {
             <WebsiteDetailsCard analysis={analysisResult} />
           </FadeIn>
 
+          {/* Dual Engine Protection Status Card */}
+          <FadeIn delay={0.25}>
+            <EngineStatusCard compact={true} />
+          </FadeIn>
+
           {/* Threat Warnings List */}
           {threats.length > 0 && (
             <FadeIn delay={0.3} className="space-y-2">
               <div className="flex items-center justify-between px-1">
-                <h3 className="text-[11px] font-extrabold text-slate-300 uppercase tracking-wider">
+                <h3 className="text-[11px] font-extrabold text-[#E2454A] uppercase tracking-wider">
                   Security Alerts Detected ({threats.length})
                 </h3>
               </div>

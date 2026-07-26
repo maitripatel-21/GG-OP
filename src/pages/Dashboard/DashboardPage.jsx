@@ -7,6 +7,7 @@ import SecurityScoreCard from '../../components/cards/SecurityScoreCard';
 import ScanChartCard from '../../components/cards/ScanChartCard';
 import RiskBreakdownCard from '../../components/cards/RiskBreakdownCard';
 import DomainCompareCard from '../../components/cards/DomainCompareCard';
+import EngineStatusCard from '../../components/cards/EngineStatusCard';
 import PrimaryButton from '../../components/buttons/PrimaryButton';
 import FadeIn from '../../components/animations/FadeIn';
 import LandingPage from '../Landing/LandingPage';
@@ -93,12 +94,8 @@ export default function DashboardPage() {
             {/* Header Action Row (Audit Report Export) */}
             <div className="flex items-center justify-between border-b border-white/5 pb-3">
               <div>
-                <h2 className="text-xl font-bold text-white">
-                  Security Analytics Dashboard
-                </h2>
-                <p className="text-xs text-slate-400">
-                  Live browser history inspection & threat analysis
-                </p>
+                <h2 className="text-xl font-bold text-white">Security Analytics Dashboard</h2>
+                <p className="text-xs text-slate-400">Live browser history inspection & threat analysis</p>
               </div>
 
               {/* Feature 1: Export Security Audit Report */}
@@ -139,6 +136,9 @@ export default function DashboardPage() {
               />
             </div>
 
+            {/* Dual Engine Protection Status Card */}
+            <EngineStatusCard compact={false} />
+
             {/* Safety Score + Weekly Scan Chart */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               <div className="md:col-span-1">
@@ -172,9 +172,7 @@ export default function DashboardPage() {
                 <button
                   onClick={() => setHistoryFilter('all')}
                   className={`px-3 py-1 rounded-lg text-xs font-semibold ${
-                    historyFilter === 'all'
-                      ? 'bg-[#E2454A]/20 text-[#E2454A] border border-[#E2454A]/30'
-                      : 'text-slate-400 hover:text-white'
+                    historyFilter === 'all' ? 'bg-[#E2454A]/20 text-[#E2454A] border border-[#E2454A]/30' : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   All ({historyList.length})
@@ -182,9 +180,7 @@ export default function DashboardPage() {
                 <button
                   onClick={() => setHistoryFilter('safe')}
                   className={`px-3 py-1 rounded-lg text-xs font-semibold ${
-                    historyFilter === 'safe'
-                      ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                      : 'text-slate-400 hover:text-white'
+                    historyFilter === 'safe' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   Safe ({safeWebsites.length})
@@ -192,9 +188,7 @@ export default function DashboardPage() {
                 <button
                   onClick={() => setHistoryFilter('risky')}
                   className={`px-3 py-1 rounded-lg text-xs font-semibold ${
-                    historyFilter === 'risky'
-                      ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
-                      : 'text-slate-400 hover:text-white'
+                    historyFilter === 'risky' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   Unsafe ({unsafeWebsites.length})
@@ -204,17 +198,12 @@ export default function DashboardPage() {
 
             {filteredHistory.length === 0 ? (
               <GlassContainer className="p-8 text-center text-slate-400 text-xs">
-                No browsing history recorded yet. Open tabs to begin live security
-                inspection.
+                No browsing history recorded yet. Open tabs to begin live security inspection.
               </GlassContainer>
             ) : (
               <div className="space-y-2.5">
                 {filteredHistory.map((item) => (
-                  <HistoryItemCard
-                    key={item.id}
-                    item={item}
-                    onWhitelist={handleAddWhitelist}
-                  />
+                  <HistoryItemCard key={item.id} item={item} onWhitelist={handleAddWhitelist} />
                 ))}
               </div>
             )}
@@ -232,8 +221,7 @@ export default function DashboardPage() {
                     Trusted Domain Whitelist Manager
                   </h2>
                   <p className="text-xs text-slate-400">
-                    Domains listed here bypass warning overlays and automated security
-                    flags.
+                    Domains listed here bypass warning overlays and automated security flags.
                   </p>
                 </div>
 
@@ -280,10 +268,7 @@ export default function DashboardPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 pt-2">
                 {whitelist.map((domain) => (
-                  <div
-                    key={domain}
-                    className="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between text-xs"
-                  >
+                  <div key={domain} className="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between text-xs">
                     <span className="font-bold text-white truncate">{domain}</span>
                     <button
                       onClick={() => handleRemoveWhitelist(domain)}
