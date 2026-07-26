@@ -4,7 +4,7 @@ import { urlAnalysisEngine } from '../services/url/urlAnalysisEngine';
 import { storageService } from '../services/storage/chromeStorage';
 
 /**
- * Custom React Hook for Popup URL Analysis & Real-Time Tab Sync
+ * Custom React Hook for Popup URL Analysis & Live VirusTotal API Sync
  */
 export function useUrlAnalyzer() {
   const [analysisResult, setAnalysisResult] = useState(null);
@@ -20,11 +20,16 @@ export function useUrlAnalyzer() {
       const targetUrl = activeTab?.url || 'https://github.com';
       setActiveTabUrl(targetUrl);
 
-      const result = urlAnalysisEngine.analyze(targetUrl, { ...settings, whitelist });
-      setAnalysisResult(result);
+      // 1. Instant local heuristic analysis
+      const initialReport = urlAnalysisEngine.analyze(targetUrl, { ...settings, whitelist });
+      setAnalysisResult(initialReport);
+      setIsScanning(false);
+
+      // 2. Live VirusTotal v3 API Threat Intelligence lookup
+      const fullReport = await urlAnalysisEngine.analyzeAsync(targetUrl, { ...settings, whitelist });
+      setAnalysisResult(fullReport);
     } catch (err) {
       console.error('[useUrlAnalyzer] Error scanning tab:', err);
-    } finally {
       setIsScanning(false);
     }
   }, []);
@@ -41,13 +46,11 @@ export function useUrlAnalyzer() {
         }
       };
 
-      if (chrome.tabs.onActivated)
-        chrome.tabs.onActivated.addListener(handleTabActivated);
+      if (chrome.tabs.onActivated) chrome.tabs.onActivated.addListener(handleTabActivated);
       if (chrome.tabs.onUpdated) chrome.tabs.onUpdated.addListener(handleTabUpdated);
 
       return () => {
-        if (chrome.tabs.onActivated)
-          chrome.tabs.onActivated.removeListener(handleTabActivated);
+        if (chrome.tabs.onActivated) chrome.tabs.onActivated.removeListener(handleTabActivated);
         if (chrome.tabs.onUpdated) chrome.tabs.onUpdated.removeListener(handleTabUpdated);
       };
     }

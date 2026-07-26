@@ -3,7 +3,7 @@ import { storageService } from '../services/storage/chromeStorage';
 
 /**
  * Gorillaz Guard - Manifest V3 Background Service Worker
- * Manages tab listeners, real-time URL inspection, action badges, and runtime message bus
+ * Manages tab listeners, real-time URL inspection, VirusTotal API threat checks, action badges, and runtime message bus
  */
 
 // Update toolbar action badge based on safety score
@@ -31,13 +31,7 @@ function updateActionBadge(tabId, safetyScore, safetyLevel) {
 
 // Save inspected site into persistent history log
 async function logSiteToHistory(analysis) {
-  if (
-    !analysis ||
-    !analysis.domain ||
-    analysis.domain === 'Internal Browser Page' ||
-    analysis.isWhitelisted
-  )
-    return;
+  if (!analysis || !analysis.domain || analysis.domain === 'Internal Browser Page' || analysis.isWhitelisted) return;
 
   try {
     const existingHistory = (await storageService.get('security_history')) || [];
@@ -45,10 +39,7 @@ async function logSiteToHistory(analysis) {
       id: `h-${Date.now()}`,
       domain: analysis.domain,
       url: analysis.url,
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       safetyScore: analysis.safetyScore,
       safetyLevel: analysis.safetyLevel,
       threatCount: analysis.threatCount,
@@ -56,17 +47,14 @@ async function logSiteToHistory(analysis) {
     };
 
     // Keep latest 50 logs
-    const updatedHistory = [
-      newLogItem,
-      ...existingHistory.filter((item) => item.domain !== analysis.domain),
-    ].slice(0, 50);
+    const updatedHistory = [newLogItem, ...existingHistory.filter((item) => item.domain !== analysis.domain)].slice(0, 50);
     await storageService.set('security_history', updatedHistory);
   } catch (e) {
     console.warn('[Gorillaz Guard Worker] Failed to save history log:', e);
   }
 }
 
-// Active URL Inspector Handler
+// Active URL Inspector Handler with Live VirusTotal API v3 Lookup
 async function inspectTabUrl(tabId, url) {
   if (!url || typeof url !== 'string' || !url.startsWith('http')) return;
 
@@ -76,8 +64,8 @@ async function inspectTabUrl(tabId, url) {
 
     const whitelist = (await storageService.get('whitelist')) || [];
 
-    // Run master URL analysis engine with active whitelist
-    const analysis = urlAnalysisEngine.analyze(url, { ...settings, whitelist });
+    // Run master URL analysis engine with live VirusTotal API threat intelligence
+    const analysis = await urlAnalysisEngine.analyzeAsync(url, { ...settings, whitelist });
 
     // Update action badge (100 SAFE for whitelisted platforms)
     updateActionBadge(tabId, analysis.safetyScore, analysis.safetyLevel);
@@ -93,17 +81,15 @@ async function inspectTabUrl(tabId, url) {
 
     // If site is dangerous and autoWarnBanners is enabled, send message to content script
     if (analysis.safetyScore < 50 && settings.autoWarnBanners) {
-      chrome.tabs
-        .sendMessage(tabId, {
-          action: 'SHOW_WARNING_BANNER',
-          details: {
-            domain: analysis.domain,
-            safetyScore: analysis.safetyScore,
-            threatCount: analysis.threatCount,
-            reason: `High Risk Site (Safety Score: ${analysis.safetyScore}/100)`,
-          },
-        })
-        .catch(() => {});
+      chrome.tabs.sendMessage(tabId, {
+        action: 'SHOW_WARNING_BANNER',
+        details: {
+          domain: analysis.domain,
+          safetyScore: analysis.safetyScore,
+          threatCount: analysis.threatCount,
+          reason: `High Risk Site (Safety Score: ${analysis.safetyScore}/100)`,
+        },
+      }).catch(() => {});
     }
   } catch (e) {
     console.error('[Gorillaz Guard Worker] Tab inspection failed:', e);
@@ -139,10 +125,7 @@ if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage)
 
       switch (request.action) {
         case 'ANALYZE_URL': {
-          const analysis = urlAnalysisEngine.analyze(request.url, {
-            ...settings,
-            whitelist,
-          });
+          const analysis = await urlAnalysisEngine.analyzeAsync(request.url, { ...settings, whitelist });
           return { status: 'success', analysis };
         }
         case 'GET_SETTINGS': {
@@ -161,9 +144,7 @@ if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage)
             // Update badge & remove banner if currently viewing this tab
             if (sender && sender.tab && sender.tab.id) {
               updateActionBadge(sender.tab.id, 100, 'SAFE');
-              chrome.tabs
-                .sendMessage(sender.tab.id, { action: 'REMOVE_WARNING_BANNER' })
-                .catch(() => {});
+              chrome.tabs.sendMessage(sender.tab.id, { action: 'REMOVE_WARNING_BANNER' }).catch(() => {});
             }
 
             return { status: 'success', whitelist: updated };
