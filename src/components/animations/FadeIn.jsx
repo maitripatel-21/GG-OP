@@ -1,15 +1,14 @@
 import { motion } from 'framer-motion';
 
 /**
- * Reusable animation container for smooth fade and slide transitions
+ * Professional Minimal FadeIn Component (150ms subtle opacity transition)
  */
-export default function FadeIn({ children, delay = 0, duration = 0.3, className = '' }) {
+export default function FadeIn({ children, className = '', delay = 0 }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
+      initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration, delay, ease: 'easeOut' }}
+      transition={{ duration: 0.15, delay, ease: 'easeOut' }}
       className={className}
     >
       {children}

@@ -1,30 +1,15 @@
+import React from 'react';
+
 /**
- * Reusable Minimal Glassmorphism Container Component
+ * Flat, Minimal Container Component (Clean Flat Dark Surface)
  */
-export default function GlassContainer({
-  children,
-  className = '',
-  hover = false,
-  onClick,
-  variant = 'default',
-}) {
-  const baseStyles = 'rounded-2xl border transition-all duration-200 backdrop-blur-md';
-
-  const variants = {
-    default: 'bg-[#0D1320]/75 border-white/5 shadow-sm',
-    card: 'bg-[#151D2D]/40 border-white/5',
-    interactive:
-      'bg-white/[0.03] border-white/10 hover:border-cyan-500/30 hover:bg-white/[0.06]',
-    danger: 'bg-rose-500/[0.06] border-rose-500/20',
-    success: 'bg-emerald-500/[0.06] border-emerald-500/20',
-  };
-
-  const hoverStyles = hover ? 'glass-card-hover cursor-pointer' : '';
-
+export default function GlassContainer({ children, className = '', onClick = null }) {
   return (
     <div
       onClick={onClick}
-      className={`${baseStyles} ${variants[variant] || variants.default} ${hoverStyles} ${className}`}
+      className={`bg-[#161922] border border-slate-800 rounded-xl transition-colors duration-150 ${
+        onClick ? 'cursor-pointer hover:border-slate-700' : ''
+      } ${className}`}
     >
       {children}
     </div>
