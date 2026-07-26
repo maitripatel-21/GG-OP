@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Clean Flat Dark Background Container
  */

@@ -1,5 +1,3 @@
-import React from 'react';
-
 /**
  * Flat, Minimal Container Component (Clean Flat Dark Surface)
  */
