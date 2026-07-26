@@ -11,6 +11,14 @@ const vtCache = new Map();
 
 export const virusTotalService = {
   /**
+   * Check if VirusTotal API Key is configured and ready
+   * @returns {boolean}
+   */
+  isConfigured() {
+    return Boolean(VIRUSTOTAL_API_KEY && VIRUSTOTAL_API_KEY.length > 10);
+  },
+
+  /**
    * Check domain threat intelligence via VirusTotal v3 API
    * @param {string} domain
    * @returns {Promise<object|null>} VirusTotal analysis report summary
@@ -30,19 +38,13 @@ export const virusTotalService = {
         method: 'GET',
         headers: {
           'x-apikey': VIRUSTOTAL_API_KEY,
-          Accept: 'application/json',
+          'Accept': 'application/json',
         },
       });
 
       if (!response.ok) {
         if (response.status === 404) {
-          const result = {
-            isWhitelisted: false,
-            maliciousCount: 0,
-            suspiciousCount: 0,
-            harmlessCount: 1,
-            status: 'NOT_FOUND',
-          };
+          const result = { isWhitelisted: false, maliciousCount: 0, suspiciousCount: 0, harmlessCount: 1, status: 'NOT_FOUND' };
           vtCache.set(cleanDomain, result);
           return result;
         }
@@ -61,8 +63,7 @@ export const virusTotalService = {
         maliciousCount,
         suspiciousCount,
         harmlessCount,
-        totalEngines:
-          maliciousCount + suspiciousCount + harmlessCount + (stats.undetected || 0),
+        totalEngines: maliciousCount + suspiciousCount + harmlessCount + (stats.undetected || 0),
         isMalicious: maliciousCount > 0,
         isSuspicious: suspiciousCount > 1,
         reputation: json?.data?.attributes?.reputation || 0,
