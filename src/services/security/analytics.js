@@ -3,7 +3,7 @@ import { urlAnalysisEngine } from '../url/urlAnalysisEngine';
 
 /**
  * Real-Time Security Analytics, Export/Import, & Chrome History Service
- * 100% Real Dynamic Data - Zero Stubs
+ * 100% Real Dynamic Data - Zero Stubs - CSP Compliant
  */
 export const analyticsService = {
   /**
@@ -121,6 +121,7 @@ export const analyticsService = {
 
   /**
    * Generate & Export Executive Security Audit Report as a Professional Printable PDF
+   * Manifest V3 CSP Compliant (Zero inline scripts, zero inline event handlers)
    */
   exportPDFReport(metrics, historyList) {
     const auditId = `GG-AUDIT-${Date.now().toString().slice(-6)}`;
@@ -133,7 +134,7 @@ export const analyticsService = {
 
     const safePercentage = total > 0 ? Math.round((safe / total) * 100) : 100;
 
-    // Generate HTML Printable Window
+    // Generate HTML Printable Window (CSP Compliant: No inline <script> or onclick="")
     const reportHtml = `
       <!DOCTYPE html>
       <html lang="en">
@@ -274,7 +275,7 @@ export const analyticsService = {
       </head>
       <body>
         <div class="no-print" style="margin-bottom: 15px; text-align: right;">
-          <button onclick="window.print()" style="background: #E2454A; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;">
+          <button id="btn-print-pdf" style="background: #E2454A; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer;">
             Print / Save as PDF
           </button>
         </div>
@@ -357,13 +358,6 @@ export const analyticsService = {
           <div>Gorillaz Guard Browser Security Suite — Generated for Security Compliance</div>
           <div>Page 1 of 1</div>
         </div>
-
-        <script>
-          // Auto-trigger print dialog after load
-          window.onload = function() {
-            setTimeout(function() { window.print(); }, 500);
-          };
-        </script>
       </body>
       </html>
     `;
@@ -372,6 +366,15 @@ export const analyticsService = {
     if (printWindow) {
       printWindow.document.write(reportHtml);
       printWindow.document.close();
+
+      // Bind print listener dynamically via DOM to comply with Manifest V3 CSP
+      printWindow.addEventListener('load', () => {
+        const btn = printWindow.document.getElementById('btn-print-pdf');
+        if (btn) {
+          btn.addEventListener('click', () => printWindow.print());
+        }
+        setTimeout(() => printWindow.print(), 300);
+      });
     }
   },
 
